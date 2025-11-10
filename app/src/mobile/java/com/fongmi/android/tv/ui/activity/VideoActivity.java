@@ -23,10 +23,12 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.text.style.ClickableSpan;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.media.AudioManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -166,6 +168,7 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
     private int mBatteryLevel = -1;
     private boolean mIsCharging = false;
     private boolean mPausedByScreen = false;
+    private AudioManager mAudioManager;
 
     public static void push(FragmentActivity activity, String text) {
         if (FileChooser.isValid(activity, Uri.parse(text))) file(activity, FileChooser.getPathFromUri(activity, Uri.parse(text)));
@@ -308,6 +311,7 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         mDialogs = new ArrayList<>();
         mBroken = new ArrayList<>();
         mClock = Clock.create();
+        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         mR1 = this::hideControl;
         mR2 = this::setTraffic;
         mR3 = this::setOrient;
@@ -1821,6 +1825,71 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         if (Setting.isBackgroundOff()) onPaused();
         if (Setting.isBackgroundOff()) mClock.stop();
         setStop(true);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        // 只在视频播放时处理键盘事件
+        if (mPlayers != null && !mPlayers.isEmpty()) {
+            switch (keyCode) {
+                case KeyEvent.KEYCODE_DPAD_LEFT:
+                    // 左方向键：快退10秒
+                    if (mPlayers.isPlaying() || mPlayers.getPosition() > 0) {
+                        long currentPosition = mPlayers.getPosition();
+                        long seekTime = -10000; // 快退10秒
+                        long newPosition = Math.max(0, currentPosition + seekTime);
+                        mPlayers.seekTo(newPosition);
+                        // 显示快退提示
+                        onSeek(seekTime);
+                        App.post(() -> {
+                            mBinding.widget.seek.setVisibility(View.GONE);
+                        }, 1000);
+                        return true;
+                    }
+                    break;
+                case KeyEvent.KEYCODE_DPAD_RIGHT:
+                    // 右方向键：快进10秒
+                    if (mPlayers.isPlaying() || mPlayers.getPosition() > 0) {
+                        long currentPosition = mPlayers.getPosition();
+                        long duration = mPlayers.getDuration();
+                        long seekTime = 10000; // 快进10秒
+                        long newPosition = Math.min(duration > 0 ? duration : Long.MAX_VALUE, currentPosition + seekTime);
+                        mPlayers.seekTo(newPosition);
+                        // 显示快进提示
+                        onSeek(seekTime);
+                        App.post(() -> {
+                            mBinding.widget.seek.setVisibility(View.GONE);
+                        }, 1000);
+                        return true;
+                    }
+                    break;
+                case KeyEvent.KEYCODE_DPAD_UP:
+                    // 上方向键：增加音量
+                    if (mAudioManager != null) {
+                        int currentVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                        int maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+                        int newVolume = Math.min(maxVolume, currentVolume + 1);
+                        mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, newVolume, 0);
+                        onVolume((int) (newVolume * 100.0f / maxVolume));
+                        App.post(() -> onVolumeEnd(), 1000);
+                        return true;
+                    }
+                    break;
+                case KeyEvent.KEYCODE_DPAD_DOWN:
+                    // 下方向键：减少音量
+                    if (mAudioManager != null) {
+                        int currentVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                        int maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+                        int newVolume = Math.max(0, currentVolume - 1);
+                        mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, newVolume, 0);
+                        onVolume((int) (newVolume * 100.0f / maxVolume));
+                        App.post(() -> onVolumeEnd(), 1000);
+                        return true;
+                    }
+                    break;
+            }
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override

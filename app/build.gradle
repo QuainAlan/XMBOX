@@ -27,8 +27,11 @@ android {
         minSdk 24
         //noinspection ExpiredTargetSdkVersion
         targetSdk 28
-        versionCode 310
-        versionName "3.1.0"
+        versionCode 311
+        versionName "3.1.1"
+        // GitHub Token (可选，用于提高API请求限制)
+        def githubToken = project.findProperty("GITHUB_TOKEN") ?: ""
+        buildConfigField "String", "GITHUB_TOKEN", "\"${githubToken}\""
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = ["room.schemaLocation": "$projectDir/schemas".toString(), "eventBusIndex": "com.fongmi.android.tv.event.EventIndex"]

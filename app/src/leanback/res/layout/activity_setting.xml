@@ -236,6 +236,36 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/webdav"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/selector_item"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:text="WebDAV"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/webdavStatusText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:text="未配置"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:alpha="0.7" />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/incognito"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

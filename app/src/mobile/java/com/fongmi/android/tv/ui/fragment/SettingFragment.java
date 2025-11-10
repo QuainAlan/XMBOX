@@ -48,9 +48,11 @@ import com.fongmi.android.tv.ui.dialog.LiveDialog;
 import com.fongmi.android.tv.ui.dialog.ProxyDialog;
 import com.fongmi.android.tv.ui.dialog.RestoreDialog;
 import com.fongmi.android.tv.ui.dialog.SiteDialog;
+import com.fongmi.android.tv.ui.dialog.WebDAVDialog;
 import com.fongmi.android.tv.utils.FileChooser;
 import com.fongmi.android.tv.utils.FileUtil;
 import com.fongmi.android.tv.utils.Notify;
+import com.fongmi.android.tv.utils.WebDAVSyncManager;
 import com.fongmi.android.tv.utils.ResUtil;
 import com.fongmi.android.tv.utils.UrlUtil;
 import com.github.catvod.bean.Doh;
@@ -58,6 +60,10 @@ import com.github.catvod.net.OkHttp;
 import com.github.catvod.utils.Path;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.permissionx.guolindev.PermissionX;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -119,7 +125,30 @@ public class SettingFragment extends BaseFragment implements ConfigCallback, Sit
         mBinding.incognitoSwitch.setChecked(Setting.isIncognito());
         mBinding.liveTabVisibleSwitch.setChecked(Setting.isLiveTabVisible());
         mBinding.sizeText.setText((size = ResUtil.getStringArray(R.array.select_size))[Setting.getSize()]);
+        setWebDAVStatus();
         setLiveSettingsVisibility();
+    }
+    
+    private void setWebDAVStatus() {
+        WebDAVSyncManager manager = WebDAVSyncManager.get();
+        if (manager.isConfigured()) {
+            // 显示账号昵称（用户名）
+            String username = Setting.getWebDAVUsername();
+            if (!TextUtils.isEmpty(username)) {
+                // 如果用户名是邮箱，只显示@前面的部分
+                String displayName = username;
+                if (username.contains("@")) {
+                    displayName = username.substring(0, username.indexOf("@"));
+                }
+                String status = Setting.isWebDAVAutoSync() ? displayName + "（自动同步）" : displayName;
+                mBinding.webdavStatusText.setText(status);
+            } else {
+                String status = Setting.isWebDAVAutoSync() ? "已配置（自动同步）" : "已配置";
+                mBinding.webdavStatusText.setText(status);
+            }
+        } else {
+            mBinding.webdavStatusText.setText("未配置");
+        }
     }
 
     private void setLiveSettingsVisibility() {
@@ -178,6 +207,7 @@ public class SettingFragment extends BaseFragment implements ConfigCallback, Sit
         mBinding.liveTabVisibleSwitch.setOnClickListener(this::setLiveTabVisible);
         mBinding.size.setOnClickListener(this::setSize);
         mBinding.doh.setOnClickListener(this::setDoh);
+        mBinding.webdav.setOnClickListener(this::onWebDAV);
     }
 
     @Override
@@ -498,10 +528,33 @@ public class SettingFragment extends BaseFragment implements ConfigCallback, Sit
         }));
     }
 
+    private void onWebDAV(View view) {
+        WebDAVDialog.create(this).show();
+    }
+
     private void initConfig() {
         WallConfig.get().init();
         LiveConfig.get().init().load();
         VodConfig.get().init().load(getCallback(0));
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onRefreshEvent(RefreshEvent event) {
+        if (event.getType() == RefreshEvent.Type.CONFIG) {
+            setWebDAVStatus();
+        }
     }
 
     @Override
@@ -511,6 +564,7 @@ public class SettingFragment extends BaseFragment implements ConfigCallback, Sit
         setSourceHintText(mBinding.liveUrl, LiveConfig.getDesc(), R.string.source_hint_live);
         // setSourceHintText(mBinding.wallUrl, WallConfig.getDesc(), R.string.source_hint_wall); // 壁纸功能已移除
         setCacheText();
+        setWebDAVStatus(); // 更新WebDAV状态
     }
 
     @Override

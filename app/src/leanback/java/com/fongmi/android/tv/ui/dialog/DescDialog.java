@@ -23,6 +23,8 @@ public class DescDialog {
         DialogDescBinding binding = DialogDescBinding.inflate(LayoutInflater.from(activity));
         AlertDialog dialog = new MaterialAlertDialogBuilder(activity).setView(binding.getRoot()).create();
         dialog.getWindow().setDimAmount(0);
+        // 设置对话框背景为透明，让布局的深色背景显示
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         initView(binding.text, desc, activity);
         dialog.show();
     }

@@ -73,6 +73,8 @@ public class ConfigDialog implements DialogInterface.OnDismissListener {
         params.width = (int) (ResUtil.getScreenWidth() * 0.55f);
         dialog.getWindow().setAttributes(params);
         dialog.getWindow().setDimAmount(0);
+        // 设置对话框背景为透明，让布局的深色背景显示
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         dialog.setOnDismissListener(this);
         dialog.show();
     }

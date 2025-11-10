@@ -110,6 +110,8 @@ public class SiteDialog implements SiteAdapter.OnClickListener {
         params.width = (int) (ResUtil.getScreenWidth() * getWidth());
         dialog.getWindow().setAttributes(params);
         dialog.getWindow().setDimAmount(0);
+        // 设置对话框背景为透明，让布局的深色背景显示
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         dialog.show();
     }
 
