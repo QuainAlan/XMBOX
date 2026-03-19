@@ -32,6 +32,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
+        <View
+            android:id="@+id/dim"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#99000000"
+            android:visibility="gone" />
+
         <include
             android:id="@+id/widget"
             layout="@layout/view_widget_vod"
@@ -48,13 +55,26 @@
 
     </FrameLayout>
 
+    <ImageView
+        android:id="@+id/poster"
+        android:layout_width="100dp"
+        android:layout_height="140dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
+        android:layout_toEndOf="@+id/video"
+        android:background="@drawable/shape_poster_rounded"
+        android:outlineProvider="background"
+        android:clipToOutline="true"
+        android:scaleType="centerCrop"
+        tools:src="@color.gray" />
+
     <TextView
         android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
-        android:layout_toEndOf="@+id/video"
+        android:layout_toEndOf="@+id/poster"
         android:singleLine="true"
         android:textColor="@color/white"
         android:textSize="24sp"

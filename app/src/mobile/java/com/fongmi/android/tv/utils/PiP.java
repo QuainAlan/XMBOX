@@ -1,4 +1,5 @@
 package com.fongmi.android.tv.utils;
+import com.github.catvod.utils.Logger;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -58,7 +59,7 @@ public class PiP {
         try {
             activity.setPictureInPictureParams(builder.build());
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
         }
     }
 
@@ -71,7 +72,7 @@ public class PiP {
         try {
             activity.setPictureInPictureParams(builder.setActions(actions).build());
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
         }
     }
 
@@ -84,7 +85,7 @@ public class PiP {
             else builder.setAspectRatio(getRational(width, height));
             activity.enterPictureInPictureMode(builder.build());
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
         }
     }
 

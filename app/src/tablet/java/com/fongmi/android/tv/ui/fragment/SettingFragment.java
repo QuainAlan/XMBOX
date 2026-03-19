@@ -1,4 +1,5 @@
 package com.fongmi.android.tv.ui.fragment;
+import com.github.catvod.utils.Logger;
 
 import android.Manifest;
 import android.app.Activity;
@@ -167,6 +168,7 @@ public class SettingFragment extends BaseFragment implements ConfigCallback, Sit
         // mBinding.wall.setOnClickListener(this::onWall); // 壁纸功能已移除
         mBinding.proxy.setOnClickListener(this::onProxy);
         mBinding.cache.setOnClickListener(this::onCache);
+        mBinding.webdav.setOnClickListener(this::onWebDAV);
         mBinding.backup.setOnClickListener(this::onBackup);
         mBinding.player.setOnClickListener(this::onPlayer);
         mBinding.restore.setOnClickListener(this::onRestore);
@@ -208,7 +210,7 @@ public class SettingFragment extends BaseFragment implements ConfigCallback, Sit
                 load(config);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
         }
     }
 
@@ -241,7 +243,7 @@ public class SettingFragment extends BaseFragment implements ConfigCallback, Sit
                     break;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
             Notify.dismiss();
         }
     }
@@ -490,6 +492,10 @@ public class SettingFragment extends BaseFragment implements ConfigCallback, Sit
                 setCacheText();
             }
         });
+    }
+
+    private void onWebDAV(View view) {
+        com.fongmi.android.tv.ui.dialog.WebDAVDialog.create(this).show();
     }
 
     private void onBackup(View view) {

@@ -40,6 +40,7 @@ import com.fongmi.android.tv.ui.custom.CustomTextListener;
 import com.fongmi.android.tv.ui.dialog.SiteDialog;
 import com.fongmi.android.tv.utils.PauseExecutor;
 import com.fongmi.android.tv.utils.ResUtil;
+import com.fongmi.android.tv.utils.SearchResultOptimizer;
 import com.fongmi.android.tv.utils.Util;
 import com.github.catvod.net.OkHttp;
 import com.google.android.flexbox.FlexDirection;
@@ -149,9 +150,12 @@ public class CollectActivity extends BaseActivity implements CustomScroller.Call
     private void setViewModel() {
         mViewModel = new ViewModelProvider(this).get(SiteViewModel.class);
         mViewModel.search.observe(this, result -> {
-            if (mCollectAdapter.getPosition() == 0) mSearchAdapter.addAll(result.getList());
-            mCollectAdapter.add(Collect.create(result.getList()));
-            mCollectAdapter.add(result.getList());
+            // 使用搜索结果优化器处理结果
+            String keyword = mBinding.keyword.getText().toString().trim();
+            List<Vod> optimizedList = SearchResultOptimizer.optimize(result.getList(), keyword);
+            if (mCollectAdapter.getPosition() == 0) mSearchAdapter.addAll(optimizedList);
+            mCollectAdapter.add(Collect.create(optimizedList));
+            mCollectAdapter.add(optimizedList);
             updateEmptyState();
         });
         mViewModel.result.observe(this, result -> {
@@ -292,7 +296,10 @@ public class CollectActivity extends BaseActivity implements CustomScroller.Call
         mBinding.recycler.scrollToPosition(0);
         mCollectAdapter.setActivated(position);
         mSearchAdapter.setAll(item.getList());
+        // 重置分页状态：切换数据源时需要重置加载状态
         mScroller.setPage(item.getPage());
+        mScroller.setLoading(false);
+        mScroller.setEnable(0); // 0表示启用加载更多，不限制页数
     }
 
     @Override

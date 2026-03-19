@@ -1,4 +1,5 @@
 package com.fongmi.android.tv.ui.activity;
+import com.github.catvod.utils.Logger;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -120,7 +121,7 @@ public class CastWorksActivity extends BaseActivity implements VodPresenter.OnCl
         try {
             mViewModel.searchContent(site, mCastName, false);
         } catch (Throwable e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
         }
     }
     

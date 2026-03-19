@@ -53,7 +53,7 @@ public class UpdateInstaller {
                 Logger.d("UpdateInstaller: 已打开安装权限设置页面");
             } catch (Exception e) {
                 Logger.e("UpdateInstaller: 无法打开安装权限设置页面: " + e.getMessage());
-                e.printStackTrace();
+                Logger.e("Error", e);
             }
         }
     }
@@ -107,7 +107,7 @@ public class UpdateInstaller {
             return true;
         } catch (Exception e) {
             Logger.e("UpdateInstaller: 安装失败: " + e.getMessage());
-            e.printStackTrace();
+            Logger.e("Error", e);
             return false;
         }
     }

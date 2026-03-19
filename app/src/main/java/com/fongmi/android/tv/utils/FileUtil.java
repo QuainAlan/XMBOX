@@ -72,7 +72,7 @@ public class FileUtil {
             int read;
             while ((read = is.read(buffer)) > 0) os.write(buffer, 0, read);
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
         } finally {
             Path.clear(target);
         }
@@ -84,7 +84,7 @@ public class FileUtil {
             int read;
             while ((read = is.read(buffer)) != -1) os.write(buffer, 0, read);
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
         }
     }
 
@@ -98,7 +98,7 @@ public class FileUtil {
                 else Path.copy(zip.getInputStream(entry), out);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
         }
     }
 

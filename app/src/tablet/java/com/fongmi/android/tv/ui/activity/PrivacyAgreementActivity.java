@@ -1,4 +1,5 @@
 package com.fongmi.android.tv.ui.activity;
+import com.github.catvod.utils.Logger;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -66,7 +67,7 @@ public class PrivacyAgreementActivity extends BaseActivity {
                 System.exit(0);
             }, 100);
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
             // 备选退出方案
             System.exit(0);
         }

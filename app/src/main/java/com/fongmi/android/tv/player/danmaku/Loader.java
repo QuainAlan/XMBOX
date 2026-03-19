@@ -1,4 +1,5 @@
 package com.fongmi.android.tv.player.danmaku;
+import com.github.catvod.utils.Logger;
 
 import com.fongmi.android.tv.Constant;
 import com.fongmi.android.tv.bean.Danmaku;
@@ -20,7 +21,7 @@ public class Loader implements ILoader {
         try {
             load(item.getUrl());
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
         }
     }
 
@@ -31,7 +32,7 @@ public class Loader implements ILoader {
             if (url.startsWith("/")) url = "file:/" + url;
             load(OkHttp.newCall(OkHttp.client(Constant.TIMEOUT_DANMAKU), UrlUtil.convert(url), "danmaku").execute().body().byteStream());
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
         }
     }
 

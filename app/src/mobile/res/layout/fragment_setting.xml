@@ -43,21 +43,16 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/shape_sync_button"
                     android:gravity="center"
-                    android:orientation="horizontal">
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp">
 
                     <ImageView
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:layout_marginEnd="6dp"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:src="@drawable/ic_action_scan"
                         android:tint="@color/white" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="扫码绑定"
-                        android:textColor="@color/white"
-                        android:textSize="14sp" />
 
                 </LinearLayout>
 
@@ -285,7 +280,7 @@
                         android:textSize="16sp" />
 
                 </LinearLayout>
-                
+
                 <!-- 无痕模式 -->
                 <LinearLayout
                     android:id="@+id/incognito"
@@ -295,7 +290,7 @@
                     android:gravity="center_vertical"
                     android:paddingTop="16dp"
                     android:paddingBottom="16dp">
-                    
+
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
@@ -389,7 +384,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:paddingTop="12dp"
-                    android:paddingBottom="16dp">
+                    android:paddingBottom="12dp">
                     
                     <ImageView
                         android:layout_width="24dp"
@@ -416,6 +411,42 @@
                         tools:text="Medium" />
 
                 </LinearLayout>
+
+                <!-- 壁纸 -->
+                <LinearLayout
+                    android:id="@+id/wall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="16dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="16dp"
+                        android:src="@drawable/photo_prints_24px"
+                        android:tint="@color/white" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="壁纸"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/wallText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:alpha="0.5"
+                        android:textSize="14sp"
+                        tools:text="内置壁纸 4" />
+
+                </LinearLayout>
+
             </LinearLayout>
 
             <!-- 网络设置分组 -->
@@ -541,6 +572,72 @@
                         tools:text="1.0 MB" />
 
                 </LinearLayout>
+            </LinearLayout>
+
+            <!-- WebDAV同步分组 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="8dp"
+                android:text="WebDAV同步"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:alpha="0.7" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_item"
+                android:orientation="horizontal"
+                android:padding="0dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="WebDAV配置"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="云端同步观看记录和设置"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        android:alpha="0.6" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/webdav"
+                    android:layout_width="wrap_content"
+                    android:layout_height="56dp"
+                    android:orientation="horizontal"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="配置"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
             </LinearLayout>
 
             <!-- 备份与恢复分组 -->

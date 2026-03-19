@@ -31,4 +31,11 @@ public class Migrations {
             database.execSQL("ALTER TABLE Live ADD COLUMN keep TEXT DEFAULT NULL");
         }
     };
+
+    public static final Migration MIGRATION_33_34 = new Migration(33, 34) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("CREATE TABLE IF NOT EXISTS Download (`id` TEXT NOT NULL PRIMARY KEY, `vodPic` TEXT, `vodName` TEXT, `vodId` TEXT, `url` TEXT, `header` TEXT, `createTime` INTEGER NOT NULL, `progress` INTEGER NOT NULL, `status` TEXT, `duration` INTEGER NOT NULL, `speed` INTEGER NOT NULL)");
+        }
+    };
 }

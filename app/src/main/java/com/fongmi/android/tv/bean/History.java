@@ -1,4 +1,5 @@
 package com.fongmi.android.tv.bean;
+import com.github.catvod.utils.Logger;
 
 import android.text.TextUtils;
 import android.view.View;
@@ -283,7 +284,7 @@ public class History {
             com.github.catvod.utils.Logger.d("History.update: 更新成功");
         } catch (Exception e) {
             com.github.catvod.utils.Logger.e("History.update: 更新失败 - " + e.getMessage());
-            e.printStackTrace();
+            Logger.e("Error", e);
         }
     }
 

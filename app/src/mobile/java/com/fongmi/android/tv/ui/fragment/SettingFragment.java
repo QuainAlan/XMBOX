@@ -1,4 +1,5 @@
 package com.fongmi.android.tv.ui.fragment;
+import com.github.catvod.utils.Logger;
 
 import android.Manifest;
 import android.app.Activity;
@@ -50,6 +51,7 @@ import com.fongmi.android.tv.ui.dialog.ProxyDialog;
 import com.fongmi.android.tv.ui.dialog.RestoreDialog;
 import com.fongmi.android.tv.ui.dialog.SiteDialog;
 import com.fongmi.android.tv.ui.dialog.SyncSettingsDialog;
+import com.fongmi.android.tv.ui.dialog.WallDialog;
 import com.fongmi.android.tv.utils.FileChooser;
 import com.fongmi.android.tv.utils.FileUtil;
 import com.fongmi.android.tv.utils.Notify;
@@ -126,7 +128,14 @@ public class SettingFragment extends BaseFragment implements ConfigCallback, Sit
         mBinding.liveTabVisibleSwitch.setChecked(Setting.isLiveTabVisible());
         mBinding.historyVisibleSwitch.setChecked(Setting.isHistoryVisible());
         mBinding.sizeText.setText((size = ResUtil.getStringArray(R.array.select_size))[Setting.getSize()]);
+        mBinding.wallText.setText(getWallText());
         setLiveSettingsVisibility();
+    }
+
+    private String getWallText() {
+        int wallIndex = Setting.getWall();
+        if (wallIndex == 0) return "本地图片";
+        return "内置壁纸 " + wallIndex;
     }
 
     private void setLiveSettingsVisibility() {
@@ -167,6 +176,7 @@ public class SettingFragment extends BaseFragment implements ConfigCallback, Sit
         // mBinding.wall.setOnClickListener(this::onWall); // 壁纸功能已移除
         mBinding.proxy.setOnClickListener(this::onProxy);
         mBinding.cache.setOnClickListener(this::onCache);
+        mBinding.webdav.setOnClickListener(this::onWebDAV);
         mBinding.backup.setOnClickListener(this::onBackup);
         mBinding.player.setOnClickListener(this::onPlayer);
         mBinding.restore.setOnClickListener(this::onRestore);
@@ -186,6 +196,7 @@ public class SettingFragment extends BaseFragment implements ConfigCallback, Sit
         mBinding.liveTabVisibleSwitch.setOnClickListener(this::setLiveTabVisible);
         mBinding.historyVisibleSwitch.setOnClickListener(this::setHistoryVisible);
         mBinding.size.setOnClickListener(this::setSize);
+        mBinding.wall.setOnClickListener(this::onWall);
         mBinding.doh.setOnClickListener(this::setDoh);
     }
 
@@ -208,7 +219,7 @@ public class SettingFragment extends BaseFragment implements ConfigCallback, Sit
                 load(config);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
         }
     }
 
@@ -241,7 +252,7 @@ public class SettingFragment extends BaseFragment implements ConfigCallback, Sit
                     break;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
             Notify.dismiss();
         }
     }
@@ -353,7 +364,7 @@ public class SettingFragment extends BaseFragment implements ConfigCallback, Sit
     }
 
     private void onWall(View view) {
-        ConfigDialog.create(this).type(type = 2).show();
+        WallDialog.create(this).show();
     }
 
     private boolean onVodEdit(View view) {
@@ -492,6 +503,10 @@ public class SettingFragment extends BaseFragment implements ConfigCallback, Sit
         });
     }
 
+    private void onWebDAV(View view) {
+        com.fongmi.android.tv.ui.dialog.WebDAVDialog.create(this).show();
+    }
+
     private void onBackup(View view) {
         PermissionX.init(this).permissions(Manifest.permission.WRITE_EXTERNAL_STORAGE).request((allGranted, grantedList, deniedList) -> AppDatabase.backup(new Callback() {
             @Override
@@ -543,7 +558,10 @@ public class SettingFragment extends BaseFragment implements ConfigCallback, Sit
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onRefreshEvent(RefreshEvent event) {
-        if (event.getType() == RefreshEvent.Type.CONFIG) {
+        if (event.getType() == RefreshEvent.Type.WALL) {
+            // 壁纸切换后刷新文字显示
+            if (mBinding != null) mBinding.wallText.setText(getWallText());
+        } else if (event.getType() == RefreshEvent.Type.CONFIG) {
             // Config refresh handling
         }
     }
@@ -560,6 +578,13 @@ public class SettingFragment extends BaseFragment implements ConfigCallback, Sit
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        // 壁纸图库选择回调
+        if (requestCode == WallDialog.REQUEST_PICK_WALLPAPER) {
+            WallDialog.handleActivityResult(requestCode, resultCode, data, getActivity());
+            // 延迟刷新文字（等待异步写入完成）
+            mBinding.getRoot().postDelayed(() -> mBinding.wallText.setText(getWallText()), 1500);
+            return;
+        }
         if (resultCode != Activity.RESULT_OK || requestCode != FileChooser.REQUEST_PICK_FILE) return;
         setConfig(Config.find("file:/" + FileChooser.getPathFromUri(getContext(), data.getData()).replace(Path.rootPath(), ""), type));
     }

@@ -1,4 +1,5 @@
 package com.fongmi.android.tv.bean;
+import com.github.catvod.utils.Logger;
 
 import android.os.Parcel;
 import android.os.Parcelable;

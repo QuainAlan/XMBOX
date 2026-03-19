@@ -1,4 +1,5 @@
 package com.fongmi.android.tv.ui.dialog;
+import com.github.catvod.utils.Logger;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -80,12 +81,12 @@ public class HistoryDialog implements ConfigAdapter.OnClickListener {
                     callback.setConfig(item);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                Logger.e("Error", e);
                 // 如果出现异常，显示错误提示
                 try {
                     Notify.show("配置切换失败: " + e.getMessage());
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Logger.e("Error", e);
                 }
             }
         }, 150); // 增加延迟到150毫秒

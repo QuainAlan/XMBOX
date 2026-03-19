@@ -1,4 +1,5 @@
 package com.fongmi.android.tv.api.config;
+import com.github.catvod.utils.Logger;
 
 import android.net.Uri;
 import android.text.TextUtils;
@@ -125,7 +126,7 @@ public class LiveConfig {
         } catch (Throwable e) {
             if (TextUtils.isEmpty(config.getUrl())) App.post(() -> callback.error(""));
             else App.post(() -> callback.error(Notify.getError(R.string.error_config_get, e)));
-            e.printStackTrace();
+            Logger.e("Error", e);
         }
     }
 
@@ -178,7 +179,7 @@ public class LiveConfig {
             initLive(object);
             initOther(object);
         } catch (Throwable e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
         } finally {
             if (callback != null) App.post(callback::success);
         }

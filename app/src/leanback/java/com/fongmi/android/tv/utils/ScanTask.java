@@ -1,4 +1,5 @@
 package com.fongmi.android.tv.utils;
+import com.github.catvod.utils.Logger;
 
 import com.fongmi.android.tv.App;
 import com.fongmi.android.tv.bean.Device;
@@ -56,7 +57,7 @@ public class ScanTask {
             init();
             getDevice(items);
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
         } finally {
             App.post(() -> {
                 if (listener != null) listener.onFind(devices);

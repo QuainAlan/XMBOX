@@ -55,6 +55,7 @@ public class SettingPlayerActivity extends BaseActivity implements UaCallback, B
         mBinding.backgroundText.setText(getSwitch(Setting.isBackgroundOn()));
         mBinding.audioDecodeText.setText(getSwitch(Setting.isAudioPrefer()));
         mBinding.danmakuLoadText.setText(getSwitch(Setting.isDanmakuLoad()));
+        mBinding.danmakuSizeText.setText(String.valueOf(Setting.getDanmakuSize()));
         mBinding.scaleText.setText((scale = ResUtil.getStringArray(R.array.select_scale))[Setting.getScale()]);
         mBinding.renderText.setText((render = ResUtil.getStringArray(R.array.select_render))[Setting.getRender()]);
         mBinding.captionText.setText((caption = ResUtil.getStringArray(R.array.select_caption))[Setting.isCaption() ? 1 : 0]);
@@ -74,6 +75,7 @@ public class SettingPlayerActivity extends BaseActivity implements UaCallback, B
         mBinding.background.setOnClickListener(this::onBackground);
         mBinding.audioDecode.setOnClickListener(this::setAudioDecode);
         mBinding.danmakuLoad.setOnClickListener(this::setDanmakuLoad);
+        mBinding.danmakuSize.setOnClickListener(this::setDanmakuSize);
     }
 
     private void setVisible() {
@@ -153,6 +155,13 @@ public class SettingPlayerActivity extends BaseActivity implements UaCallback, B
     private void setDanmakuLoad(View view) {
         Setting.putDanmakuLoad(!Setting.isDanmakuLoad());
         mBinding.danmakuLoadText.setText(getSwitch(Setting.isDanmakuLoad()));
+    }
+
+    private void setDanmakuSize(View view) {
+        float size = Setting.getDanmakuSize();
+        size = size >= 2.0f ? 0.5f : size + 0.1f;
+        Setting.putDanmakuSize(size);
+        mBinding.danmakuSizeText.setText(String.valueOf(size));
     }
 
     private void onBackground(View view) {

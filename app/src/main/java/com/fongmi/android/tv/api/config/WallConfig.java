@@ -1,4 +1,5 @@
 package com.fongmi.android.tv.api.config;
+import com.github.catvod.utils.Logger;
 
 import android.graphics.Bitmap;
 import android.text.TextUtils;
@@ -80,7 +81,7 @@ public class WallConfig {
         } catch (Throwable e) {
             App.post(() -> callback.error(Notify.getError(R.string.error_config_parse, e)));
             config(Config.find(VodConfig.get().getWall(), 2));
-            e.printStackTrace();
+            Logger.e("Error", e);
         }
     }
 

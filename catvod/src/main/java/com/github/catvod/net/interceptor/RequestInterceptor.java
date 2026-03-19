@@ -11,6 +11,7 @@ import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class RequestInterceptor implements Interceptor {
 
@@ -28,6 +29,22 @@ public class RequestInterceptor implements Interceptor {
     @Override
     public Response intercept(@NonNull Chain chain) throws IOException {
         Request request = chain.request();
+        
+        // AI广告检测
+        if (AIAdInterceptor.isEnabled()) {
+            String url = request.url().toString();
+            if (AIAdInterceptor.isAd(url)) {
+                // 返回空响应模拟广告请求被拦截
+                return new Response.Builder()
+                        .request(request)
+                        .protocol(okhttp3.Protocol.HTTP_1_1)
+                        .code(204)
+                        .message("Blocked by AI Ad Detector")
+                        .body(ResponseBody.create("", null))
+                        .build();
+            }
+        }
+        
         Request.Builder builder = request.newBuilder();
         HttpUrl url = request.url();
         checkAuth(url, builder);

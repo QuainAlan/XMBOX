@@ -1,4 +1,5 @@
 package com.fongmi.android.tv.utils;
+import com.github.catvod.utils.Logger;
 
 import android.os.StatFs;
 
@@ -59,7 +60,7 @@ public class CacheCleaner {
                     cleanCache();
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                Logger.e("Error", e);
             }
         });
     }
@@ -85,7 +86,7 @@ public class CacheCleaner {
             StatFs stat = new StatFs(Path.cache().getPath());
             return stat.getAvailableBlocksLong() * stat.getBlockSizeLong();
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
             return 0;
         }
     }

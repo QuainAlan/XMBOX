@@ -1,4 +1,5 @@
 package com.fongmi.android.tv.api.config;
+import com.github.catvod.utils.Logger;
 
 import android.text.TextUtils;
 
@@ -101,7 +102,7 @@ public class VodConfig {
                     OkHttp.cancel("vod");
                 } catch (Exception e) {
                     android.util.Log.e("VodConfig", "Error cancelling previous load", e);
-                    e.printStackTrace();
+                    Logger.e("Error", e);
                 }
             }
             instance.isLoading = true;
@@ -113,7 +114,7 @@ public class VodConfig {
         } catch (Exception e) {
             instance.isLoading = false;
             android.util.Log.e("VodConfig", "Exception during load", e);
-            e.printStackTrace();
+            Logger.e("Error", e);
             App.post(() -> callback.error("配置加载失败: " + e.getMessage()));
         }
     }
@@ -168,7 +169,7 @@ public class VodConfig {
             } else {
                 loadCache(callback, e);
             }
-            e.printStackTrace();
+            Logger.e("Error", e);
         }
     }
 
@@ -220,7 +221,7 @@ public class VodConfig {
                 App.post(callback::success);
             }
         } catch (Throwable e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
             // 重置加载状态
             isLoading = false;
             App.post(() -> callback.error(Notify.getError(R.string.error_config_parse, e)));
@@ -237,7 +238,7 @@ public class VodConfig {
             BaseLoader.get().parseJar(spider, true);
         } catch (Throwable e) {
             android.util.Log.e("VodConfig", "Failed to parse spider jar: " + spider, e);
-            e.printStackTrace();
+            Logger.e("Error", e);
         }
         
         for (JsonElement element : Json.safeListElement(object, "sites")) {
@@ -250,7 +251,7 @@ public class VodConfig {
                 sites.add(site.trans().sync());
             } catch (Throwable e) {
                 android.util.Log.e("VodConfig", "Failed to add site: " + element, e);
-                e.printStackTrace();
+                Logger.e("Error", e);
                 // 继续处理下一个站点
             }
         }
@@ -409,7 +410,7 @@ public class VodConfig {
                 config.home(home.getKey()).save();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
         }
         
         // 安全地更新所有站点的激活状态
@@ -420,7 +421,7 @@ public class VodConfig {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
         }
     }
 

@@ -9,11 +9,15 @@ import android.view.View;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.leanback.widget.ArrayObjectAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewbinding.ViewBinding;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.fongmi.android.tv.App;
 import com.fongmi.android.tv.R;
 import com.fongmi.android.tv.Setting;
 import com.fongmi.android.tv.event.RefreshEvent;
@@ -95,11 +99,38 @@ public abstract class BaseActivity extends AppCompatActivity {
     private void refreshWall() {
         try {
             if (!customWall()) return;
-            File file = FileUtil.getWall(Setting.getWall());
-            if (file.exists() && file.length() > 0) getWindow().setBackgroundDrawable(Drawable.createFromPath(file.getAbsolutePath()));
-            else getWindow().setBackgroundDrawableResource(ResUtil.getDrawable(file.getName()));
+            int wallIndex = Setting.getWall();
+            int screenWidth = ResUtil.getScreenWidth();
+            int screenHeight = ResUtil.getScreenHeight();
+            // 使用 Glide 动态裁剪到屏幕尺寸
+            Glide.with(App.get())
+                    .asBitmap()
+                    .load(wallIndex == 0 ? FileUtil.getWall(0) : ResUtil.getDrawable("wallpaper_" + wallIndex))
+                    .override(screenWidth, screenHeight)
+                    .transform(new com.bumptech.glide.load.resource.bitmap.CenterCrop())
+                    .skipMemoryCache(true)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .into(new com.bumptech.glide.request.target.CustomTarget<android.graphics.Bitmap>() {
+                        @Override
+                        public void onResourceReady(@NonNull android.graphics.Bitmap resource, @Nullable com.bumptech.glide.request.transition.Transition<? super android.graphics.Bitmap> transition) {
+                            // 使用 BitmapDrawable 并设置重力为填充
+                            android.graphics.drawable.BitmapDrawable drawable = new android.graphics.drawable.BitmapDrawable(getResources(), resource);
+                            drawable.setGravity(android.view.Gravity.FILL);
+                            getWindow().setBackgroundDrawable(drawable);
+                        }
+
+                        @Override
+                        public void onLoadCleared(@Nullable Drawable placeholder) {
+                        }
+
+                        @Override
+                        public void onLoadFailed(@Nullable Drawable errorDrawable) {
+                            super.onLoadFailed(errorDrawable);
+                            getWindow().setBackgroundDrawableResource(R.drawable.wallpaper_6);
+                        }
+                    });
         } catch (Exception e) {
-            getWindow().setBackgroundDrawableResource(R.drawable.wallpaper_4);
+            getWindow().setBackgroundDrawableResource(R.drawable.wallpaper_6);
         }
     }
 

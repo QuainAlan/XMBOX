@@ -9,7 +9,7 @@ import com.fongmi.quickjs.utils.Crypto;
 import com.github.catvod.Proxy;
 import com.github.catvod.utils.Trans;
 import com.github.catvod.utils.UriUtil;
-import com.orhanobut.logger.Logger;
+import com.github.catvod.utils.Logger;
 import com.whl.quickjs.wrapper.JSFunction;
 import com.whl.quickjs.wrapper.JSMethod;
 import com.whl.quickjs.wrapper.JSObject;
@@ -130,7 +130,7 @@ public class Global {
     @JSMethod
     public String md5X(String text) {
         String result = Crypto.md5(text);
-        Logger.t("md5X").d("text:%s\nresult:\n%s", text, result);
+        Logger.d("md5X - text:" + text + ", result:" + result);
         return result;
     }
 
@@ -138,7 +138,7 @@ public class Global {
     @JSMethod
     public String aesX(String mode, boolean encrypt, String input, boolean inBase64, String key, String iv, boolean outBase64) {
         String result = Crypto.aes(mode, encrypt, input, inBase64, key, iv, outBase64);
-        Logger.t("aesX").d("mode:%s\nencrypt:%s\ninBase64:%s\noutBase64:%s\nkey:%s\niv:%s\ninput:\n%s\nresult:\n%s", mode, encrypt, inBase64, outBase64, key, iv, input, result);
+        Logger.d("aesX - mode:" + mode + ", encrypt:" + encrypt + ", result:" + result);
         return result;
     }
 
@@ -146,7 +146,7 @@ public class Global {
     @JSMethod
     public String rsaX(String mode, boolean pub, boolean encrypt, String input, boolean inBase64, String key, boolean outBase64) {
         String result = Crypto.rsa(mode, pub, encrypt, input, inBase64, key, outBase64);
-        Logger.t("rsaX").d("mode:%s\npub:%s\nencrypt:%s\ninBase64:%s\noutBase64:%s\nkey:\n%s\ninput:\n%s\nresult:\n%s", mode, pub, encrypt, inBase64, outBase64, key, input, result);
+        Logger.d("rsaX - mode:" + mode + ", encrypt:" + encrypt + ", result:" + result);
         return result;
     }
 

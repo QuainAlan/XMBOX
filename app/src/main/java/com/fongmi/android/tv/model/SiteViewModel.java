@@ -1,4 +1,5 @@
 package com.fongmi.android.tv.model;
+import com.github.catvod.utils.Logger;
 
 import android.text.TextUtils;
 
@@ -279,7 +280,7 @@ public class SiteViewModel extends ViewModel {
                 if (e instanceof InterruptedException || Thread.interrupted()) return;
                 if (e.getCause() instanceof ExtractException) result.postValue(Result.error(e.getCause().getMessage()));
                 else result.postValue(Result.empty());
-                e.printStackTrace();
+                Logger.e("Error", e);
             }
         });
     }

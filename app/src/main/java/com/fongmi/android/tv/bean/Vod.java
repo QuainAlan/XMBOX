@@ -99,6 +99,9 @@ public class Vod implements Parcelable {
     private List<Flag> vodFlags;
 
     private Site site;
+    
+    // 搜索相关性分数（临时使用，不参与序列化）
+    private int searchScore;
 
     public static List<Vod> arrayFrom(String str) {
         Type listType = new TypeToken<List<Vod>>() {}.getType();
@@ -179,6 +182,15 @@ public class Vod implements Parcelable {
 
     public String getAction() {
         return TextUtils.isEmpty(action) ? "" : action;
+    }
+
+    // 搜索相关性分数 getter/setter
+    public int getSearchScore() {
+        return searchScore;
+    }
+
+    public void setSearchScore(int score) {
+        this.searchScore = score;
     }
 
     public Cate getCate() {

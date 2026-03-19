@@ -1,4 +1,5 @@
 package com.fongmi.android.tv.player;
+import com.github.catvod.utils.Logger;
 
 import static androidx.media3.common.Player.COMMAND_SET_SPEED_AND_PITCH;
 import static androidx.media3.exoplayer.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON;
@@ -54,7 +55,7 @@ import com.fongmi.android.tv.utils.UrlUtil;
 import com.fongmi.android.tv.utils.Util;
 import com.github.catvod.utils.Path;
 import com.google.common.net.HttpHeaders;
-import com.orhanobut.logger.Logger;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -74,6 +75,7 @@ public class Players implements Player.Listener, ParseCallback {
     public static final int SOFT = 0;
     public static final int HARD = 1;
     public static final int AUTO = 2;
+    public static final int MPV = 3;
 
     private final StringBuilder builder;
     private final Formatter formatter;
@@ -127,15 +129,28 @@ public class Players implements Player.Listener, ParseCallback {
     }
 
     private void setPlayer(PlayerView view) {
+        int playerEngine = Setting.getPlayerEngine();
+
+        // 根据播放器引擎选择不同的播放器
+        if (playerEngine == Players.MPV) {
+            // MPV播放器 - 暂时使用ExoPlayer作为后备，等集成MPV后替换
+            initExoPlayer(view, decode);
+        } else {
+            // ExoPlayer播放器 (软解/硬解/自动)
+            initExoPlayer(view, decode);
+        }
+    }
+
+    private void initExoPlayer(PlayerView view, int decodeMode) {
         int renderMode;
-        if (decode == HARD) {
+        if (decodeMode == HARD) {
             renderMode = EXTENSION_RENDERER_MODE_ON; // 强制硬解
-        } else if (decode == SOFT) {
+        } else if (decodeMode == SOFT) {
             renderMode = EXTENSION_RENDERER_MODE_PREFER; // 强制软解
         } else {
             renderMode = androidx.media3.exoplayer.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF; // 自动选择
         }
-        
+
         exoPlayer = new ExoPlayer.Builder(App.get())
             .setLoadControl(ExoUtil.buildLoadControl())
             .setTrackSelector(ExoUtil.buildTrackSelector())
@@ -498,7 +513,7 @@ public class Players implements Player.Listener, ParseCallback {
         App.post(runnable, timeout);
         PlayerEvent.prepare(tag);
         session.setActive(true);
-        Logger.t(TAG).d(url);
+        Logger.d(url);
         prepare();
     }
 
@@ -511,6 +526,8 @@ public class Players implements Player.Listener, ParseCallback {
         if (danmakus == null) danmakus = new ArrayList<>();
         if (!item.isEmpty() && !danmakus.contains(item)) danmakus.add(0, item);
         for (int i = 0; i < danmakus.size(); i++) danmakus.get(i).setSelected(danmakus.get(i).getUrl().equals(item.getUrl()) && !danmakus.get(i).isSelected());
+        // 应用弹幕大小设置
+        danPlayer.setTextSize(Setting.getDanmakuSize());
     }
 
     public void setDanmakuSize(float size) {
@@ -580,7 +597,7 @@ public class Players implements Player.Listener, ParseCallback {
             intent.setType("text/plain");
             activity.startActivity(Util.getChooser(intent));
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
         }
     }
 
@@ -600,7 +617,7 @@ public class Players implements Player.Listener, ParseCallback {
             if (isVod()) intent.putExtra("position", (int) getPosition());
             activity.startActivityForResult(Util.getChooser(intent), 1001);
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
         }
     }
 
@@ -612,7 +629,7 @@ public class Players implements Player.Listener, ParseCallback {
             if ("playback_completion".equals(endBy)) ActionEvent.next();
             if ("user".equals(endBy)) seekTo(position);
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
         }
     }
 
@@ -668,10 +685,10 @@ public class Players implements Player.Listener, ParseCallback {
 
     @Override
     public void onPlayerError(@NonNull PlaybackException error) {
-        Logger.t(TAG).e(error.errorCode + "," + url);
+        Logger.e(error.errorCode + "," + url);
         // 使用友好的错误提示
         String friendlyMsg = new com.fongmi.android.tv.player.exo.ErrorMsgProvider().get(error);
-        Logger.t(TAG).e("Error: " + friendlyMsg);
+        Logger.e("Error: " + friendlyMsg);
         
         if (retried()) ErrorEvent.extract(tag, friendlyMsg);
         else switch (error.errorCode) {

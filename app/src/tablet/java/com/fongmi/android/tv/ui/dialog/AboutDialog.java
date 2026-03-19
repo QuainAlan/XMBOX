@@ -1,4 +1,5 @@
 package com.fongmi.android.tv.ui.dialog;
+import com.github.catvod.utils.Logger;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -42,7 +43,7 @@ public class AboutDialog extends BaseDialog {
             intent.setData(Uri.parse("https://github.com/Tosencen/XMBOX/releases/latest"));
             startActivity(intent);
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
         }
     }
 

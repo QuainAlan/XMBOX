@@ -1,6 +1,6 @@
 package com.fongmi.quickjs.method;
 
-import com.orhanobut.logger.Logger;
+import com.github.catvod.utils.Logger;
 import com.whl.quickjs.wrapper.QuickJSContext;
 
 public class Console implements QuickJSContext.Console {
@@ -9,21 +9,21 @@ public class Console implements QuickJSContext.Console {
 
     @Override
     public void log(String info) {
-        Logger.t(TAG).d(info);
+        Logger.d(info);
     }
 
     @Override
     public void info(String info) {
-        Logger.t(TAG).i(info);
+        Logger.i(info);
     }
 
     @Override
     public void warn(String info) {
-        Logger.t(TAG).w(info);
+        Logger.w(info);
     }
 
     @Override
     public void error(String info) {
-        Logger.t(TAG).e(info);
+        Logger.e(info);
     }
 }

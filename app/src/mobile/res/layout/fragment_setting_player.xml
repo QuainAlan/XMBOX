@@ -94,7 +94,42 @@
                         tools:text="Surface" />
 
                 </LinearLayout>
-                
+
+                <!-- 分隔线 -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="16dp"
+                    android:background="#22FFFFFF" />
+
+                <!-- 播放器引擎 -->
+                <LinearLayout
+                    android:id="@+id/playerEngine"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:background="?attr/selectableItemBackground">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:text="播放器引擎"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/playerEngineText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        tools:text="ExoPlayer (自动)" />
+
+                </LinearLayout>
+
                 <!-- 分隔线 -->
                 <View
                     android:layout_width="match_parent"

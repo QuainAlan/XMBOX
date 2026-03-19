@@ -1,4 +1,5 @@
 package com.fongmi.android.tv.model;
+import com.github.catvod.utils.Logger;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -161,7 +162,7 @@ public class LiveViewModel extends ViewModel {
                 if (type == LIVE) live.postValue(new Live());
                 if (type == EPG) epg.postValue(new Epg());
                 if (type == XML) xml.postValue(false);
-                e.printStackTrace();
+                Logger.e("Error", e);
             }
         };
     }

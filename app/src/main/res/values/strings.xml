@@ -112,6 +112,7 @@
     <string name="player_audio_decode">Audio software decode</string>
     <string name="player_aac">AAC optimization</string>
     <string name="player_danmaku_load">Danmaku load</string>
+    <string name="player_danmaku_size">Danmaku size</string>
     <string name="player_tunnel">Tunnel mode</string>
     <string name="player_buffer">Buffer time</string>
     <string name="player_speed">Press speed</string>

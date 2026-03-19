@@ -1,4 +1,5 @@
 package com.fongmi.android.tv;
+import com.github.catvod.utils.Logger;
 
 import android.app.Activity;
 import android.app.Application;
@@ -24,15 +25,15 @@ import com.github.catvod.Init;
 import com.github.catvod.bean.Doh;
 import com.github.catvod.net.OkHttp;
 import com.google.gson.Gson;
-import com.orhanobut.logger.AndroidLogAdapter;
-import com.orhanobut.logger.LogAdapter;
-import com.orhanobut.logger.Logger;
-import com.orhanobut.logger.PrettyFormatStrategy;
+
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import cat.ereza.customactivityoncrash.config.CaocConfig;
 
@@ -51,7 +52,16 @@ public class App extends Application {
 
     public App() {
         instance = this;
-        executor = Executors.newFixedThreadPool(Constant.THREAD_POOL);
+        // 根据CPU核数动态配置线程池，提升性能
+        int cpuCores = Runtime.getRuntime().availableProcessors();
+        int corePoolSize = Math.max(2, cpuCores);
+        int maxPoolSize = corePoolSize * 2;
+        executor = new ThreadPoolExecutor(
+            corePoolSize,
+            maxPoolSize,
+            60L, TimeUnit.SECONDS,
+            new LinkedBlockingQueue<Runnable>()
+        );
         handler = HandlerCompat.createAsync(Looper.getMainLooper());
         time = System.currentTimeMillis();
         gson = new com.google.gson.GsonBuilder()
@@ -115,15 +125,6 @@ public class App extends Application {
         this.activity = activity;
     }
 
-    private LogAdapter getLogAdapter() {
-        return new AndroidLogAdapter(PrettyFormatStrategy.newBuilder().methodCount(0).showThreadInfo(false).tag("").build()) {
-            @Override
-            public boolean isLoggable(int priority, String tag) {
-                return true;
-            }
-        };
-    }
-
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -133,7 +134,6 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Logger.addLogAdapter(getLogAdapter());
         OkHttp.get().setProxy(Setting.getProxy());
         OkHttp.get().setDoh(Doh.objectFrom(Setting.getDoh()));
         // EventBus.builder().addIndex(new EventIndex()).installDefaultEventBus(); // 暂时注释，如果EventIndex不存在则删除

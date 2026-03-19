@@ -1,4 +1,5 @@
 package com.fongmi.android.tv.player;
+import com.github.catvod.utils.Logger;
 
 import android.text.TextUtils;
 
@@ -147,7 +148,7 @@ public class ParseJob implements ParseCallback {
         try {
             jsonParse(item, webUrl, false);
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
         } finally {
             latch.countDown();
         }

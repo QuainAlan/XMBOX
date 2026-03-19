@@ -1,4 +1,5 @@
 package com.fongmi.android.tv.api.loader;
+import com.github.catvod.utils.Logger;
 
 import android.content.Context;
 
@@ -53,7 +54,7 @@ public class JarLoader {
             putProxy(key);
         } catch (Throwable e) {
             android.util.Log.e("JarLoader", "Failed to load jar for key: " + key, e);
-            e.printStackTrace();
+            Logger.e("Error", e);
         }
     }
 
@@ -67,7 +68,7 @@ public class JarLoader {
             Method method = clz.getMethod("init", Context.class);
             method.invoke(clz, App.get());
         } catch (Throwable e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
         }
     }
 
@@ -77,7 +78,7 @@ public class JarLoader {
             Method method = clz.getMethod("proxy", Map.class);
             methods.put(key, method);
         } catch (Throwable e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
         }
     }
 
@@ -107,7 +108,7 @@ public class JarLoader {
             }
         } catch (Throwable e) {
             android.util.Log.e("JarLoader", "Failed to parse jar for key: " + key + ", jar: " + jar, e);
-            e.printStackTrace();
+            Logger.e("Error", e);
         }
     }
 
@@ -117,7 +118,7 @@ public class JarLoader {
             if (!loaders.containsKey(jaKey)) parseJar(jaKey, jar);
             return loaders.get(jaKey);
         } catch (Throwable e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
             return null;
         }
     }
@@ -133,7 +134,7 @@ public class JarLoader {
             spiders.put(spKey, spider);
             return spider;
         } catch (Throwable e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
             return new SpiderNull();
         }
     }
@@ -168,7 +169,7 @@ public class JarLoader {
         try {
             return (Object[]) method.invoke(null, params);
         } catch (Throwable e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
             return null;
         }
     }

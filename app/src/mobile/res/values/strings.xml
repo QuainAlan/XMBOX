@@ -14,10 +14,19 @@
     <!-- Vod -->
     <string name="vod_home">Home</string>
 
+    <!-- Download -->
+    <string name="detail_download_list">Download List</string>
+
     <!-- Detail -->
     <string name="detail_flag">Flag</string>
     <string name="detail_more">More</string>
     <string name="detail_episode">Episode</string>
+    <string name="download">Download</string>
+    <string name="download_empty">No downloads yet</string>
+    <string name="download_completed">Completed</string>
+    <string name="download_failed">Failed</string>
+    <string name="downloading">Downloading...</string>
+    <string name="dialog_delete_download">All download records will be removed.</string>
     <string name="detail_quality">Quality</string>
     <string name="detail_content">Summary</string>
     <string name="detail_search">Searching <xliff:g name="name">%s</xliff:g></string>

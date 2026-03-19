@@ -4,6 +4,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.github.catvod.Init;
+import com.github.catvod.utils.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -80,6 +81,11 @@ public class Path {
         return mkdir(new File(cache() + File.separator + "thunder"));
     }
 
+    public static File download() {
+        // 使用外部存储的 TV/Download 目录，避免被系统清理
+        return mkdir(new File(tv() + File.separator + "Download"));
+    }
+
     public static File root(String name) {
         return new File(root(), name);
     }
@@ -137,7 +143,7 @@ public class Path {
             is.close();
             return new String(data, StandardCharsets.UTF_8);
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
             return "";
         }
     }
@@ -150,7 +156,7 @@ public class Path {
             is.close();
             return data;
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
             return new byte[0];
         }
     }
@@ -163,7 +169,7 @@ public class Path {
             fos.close();
             return file;
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
             return file;
         }
     }
@@ -220,7 +226,7 @@ public class Path {
             Shell.exec("chmod 777 " + file);
             return file;
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
             return file;
         }
     }

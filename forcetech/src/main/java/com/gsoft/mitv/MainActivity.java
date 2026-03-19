@@ -1,4 +1,5 @@
 package com.gsoft.mitv;
+import com.github.catvod.utils.Logger;
 
 import android.app.Service;
 import android.content.Intent;
@@ -21,7 +22,7 @@ public class MainActivity extends Service {
             checkLibrary();
             System.loadLibrary("mitv");
         } catch (Throwable t) {
-            t.printStackTrace();
+            tLogger.e("Error", e);
         }
     }
 

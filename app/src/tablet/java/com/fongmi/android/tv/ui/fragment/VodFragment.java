@@ -1,4 +1,5 @@
 package com.fongmi.android.tv.ui.fragment;
+import com.github.catvod.utils.Logger;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -313,7 +314,7 @@ public class VodFragment extends BaseFragment implements SiteCallback, FilterCal
                 mBinding.emptySourceHint.setVisibility(View.GONE);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
         }
         
         Notify.progress(getActivity());
@@ -336,7 +337,7 @@ public class VodFragment extends BaseFragment implements SiteCallback, FilterCal
                     homeContent();
                 } catch (Exception e) {
                     android.util.Log.e("VodFragment", "Error in success callback", e);
-                    e.printStackTrace();
+                    Logger.e("Error", e);
                 }
             }
             
@@ -356,7 +357,7 @@ public class VodFragment extends BaseFragment implements SiteCallback, FilterCal
                     checkEmptySource();
                 } catch (Exception e) {
                     android.util.Log.e("VodFragment", "Error in error callback", e);
-                    e.printStackTrace();
+                    Logger.e("Error", e);
                 }
             }
         });
@@ -516,7 +517,7 @@ public class VodFragment extends BaseFragment implements SiteCallback, FilterCal
                 mBinding.emptySourceHint.setVisibility(View.GONE);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
         }
         mAdapter.clear();
         mViewModel.homeContent();

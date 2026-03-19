@@ -48,13 +48,26 @@
 
         </FrameLayout>
 
+        <ImageView
+            android:id="@+id/poster"
+            android:layout_width="100dp"
+            android:layout_height="140dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_toEndOf="@+id/video"
+            android:background="@drawable/shape_poster_rounded"
+            android:outlineProvider="background"
+            android:clipToOutline="true"
+            android:scaleType="centerCrop"
+            tools:src="@color.gray" />
+
         <TextView
             android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_toEndOf="@+id/video"
+            android:layout_toEndOf="@+id/poster"
             android:maxLines="2"
             android:singleLine="true"
             android:textColor="@color/white"

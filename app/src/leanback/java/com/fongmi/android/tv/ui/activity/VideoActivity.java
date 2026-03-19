@@ -1,4 +1,5 @@
 package com.fongmi.android.tv.ui.activity;
+import com.github.catvod.utils.Logger;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -470,6 +471,7 @@ public class VideoActivity extends BaseActivity implements CustomKeyDownVod.List
         mBinding.content.setMaxLines(getMaxLines());
         mBinding.video.requestFocus();
         setArtwork(item.getVodPic());
+        setPoster(item.getVodPic(getPic()));  // 加载详情页海报
         App.removeCallbacks(mR4);
         checkHistory(item);
         checkFlag(item);
@@ -587,7 +589,7 @@ public class VideoActivity extends BaseActivity implements CustomKeyDownVod.List
             mPlayers.start(result, isUseParse(), getSite().isChangeable() ? getSite().getTimeout() : -1);
         } catch (Exception e) {
             ErrorEvent.extract(tag, e.getMessage());
-            e.printStackTrace();
+            Logger.e("Error", e);
         }
     }
 
@@ -945,6 +947,24 @@ public class VideoActivity extends BaseActivity implements CustomKeyDownVod.List
         });
     }
 
+    private void setPoster(String url) {
+        ImgUtil.load(url, R.drawable.radio, new CustomTarget<>(100 * 3, 140 * 3) {
+            @Override
+            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                mBinding.poster.setImageDrawable(resource);
+            }
+
+            @Override
+            public void onLoadFailed(@Nullable Drawable error) {
+                mBinding.poster.setImageResource(R.drawable.radio);
+            }
+
+            @Override
+            public void onLoadCleared(@Nullable Drawable placeholder) {
+            }
+        });
+    }
+
     private void setPartAdapter(List<String> items) {
         mBinding.part.setVisibility(View.VISIBLE);
         mPartAdapter.setItems(items, null);
@@ -1246,6 +1266,10 @@ public class VideoActivity extends BaseActivity implements CustomKeyDownVod.List
         else hideInfo();
         mPlayers.pause();
         checkPlayImg();
+        // 暂停时显示黑色遮罩降低画面亮度，但不影响控制按钮
+        if (mBinding.dim != null) {
+            mBinding.dim.setVisibility(View.VISIBLE);
+        }
     }
 
     private void onPlay() {
@@ -1255,6 +1279,10 @@ public class VideoActivity extends BaseActivity implements CustomKeyDownVod.List
         mPlayers.play();
         checkPlayImg();
         hideCenter();
+        // 播放时隐藏遮罩
+        if (mBinding.dim != null) {
+            mBinding.dim.setVisibility(View.GONE);
+        }
     }
 
     private boolean isFullscreen() {

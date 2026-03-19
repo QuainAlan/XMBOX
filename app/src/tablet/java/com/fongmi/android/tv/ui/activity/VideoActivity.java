@@ -1,4 +1,5 @@
 package com.fongmi.android.tv.ui.activity;
+import com.github.catvod.utils.Logger;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -31,6 +32,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.media.AudioManager;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -550,6 +552,8 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
             return new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
         } else if (parent instanceof android.widget.FrameLayout) {
             return new android.widget.FrameLayout.LayoutParams(android.widget.FrameLayout.LayoutParams.MATCH_PARENT, android.widget.FrameLayout.LayoutParams.MATCH_PARENT);
+        } else if (parent instanceof android.widget.LinearLayout) {
+            return new android.widget.LinearLayout.LayoutParams(android.widget.LinearLayout.LayoutParams.MATCH_PARENT, android.widget.LinearLayout.LayoutParams.MATCH_PARENT);
         } else {
             return new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         }
@@ -642,6 +646,7 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         mFlagAdapter.addAll(item.getVodFlags());
         setOther(mBinding.other, item);
         setArtwork(item.getVodPic());
+        setPoster(item.getVodPic(getPic()));  // 加载详情页海报
         App.removeCallbacks(mR4);
         checkHistory(item);
         checkFlag(item);
@@ -806,7 +811,7 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
             mPlayers.start(result, isUseParse(), getSite().isChangeable() ? getSite().getTimeout() : -1);
         } catch (Exception e) {
             ErrorEvent.extract(tag, e.getMessage());
-            e.printStackTrace();
+            Logger.e("Error", e);
         }
     }
 
@@ -1229,6 +1234,24 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         });
     }
 
+    private void setPoster(String url) {
+        ImgUtil.load(url, R.drawable.radio, new CustomTarget<>(100 * 3, 140 * 3) {
+            @Override
+            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                mBinding.poster.setImageDrawable(resource);
+            }
+
+            @Override
+            public void onLoadFailed(@Nullable Drawable error) {
+                mBinding.poster.setImageResource(R.drawable.radio);
+            }
+
+            @Override
+            public void onLoadCleared(@Nullable Drawable placeholder) {
+            }
+        });
+    }
+
     private void checkFlag(Vod item) {
         boolean empty = item.getVodFlags().isEmpty();
         mBinding.flag.setVisibility(empty ? View.GONE : View.VISIBLE);
@@ -1546,6 +1569,10 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mPlayers.pause();
         checkPlayImg();
+        // 暂停时显示黑色遮罩降低画面亮度，但不影响控制按钮
+        if (mBinding.dim != null) {
+            mBinding.dim.setVisibility(View.VISIBLE);
+        }
     }
 
     private void onPlay() {
@@ -1554,6 +1581,10 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         if (!mPlayers.isEmpty() && mPlayers.isIdle()) mPlayers.prepare();
         mPlayers.play();
         checkPlayImg();
+        // 播放时隐藏遮罩
+        if (mBinding.dim != null) {
+            mBinding.dim.setVisibility(View.GONE);
+        }
     }
 
     private boolean isFullscreen() {

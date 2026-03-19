@@ -2,6 +2,7 @@ package com.fongmi.quickjs.utils;
 
 import android.util.Base64;
 
+import com.github.catvod.utils.Logger;
 import com.github.catvod.utils.Util;
 
 import java.security.Key;
@@ -23,7 +24,7 @@ public class Crypto {
         try {
             return Util.md5(text);
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
             return "";
         }
     }
@@ -41,7 +42,7 @@ public class Crypto {
             byte[] inBuf = inBase64 ? Base64.decode(input.replaceAll("_", "/").replaceAll("-", "+"), Base64.DEFAULT) : input.getBytes("UTF-8");
             return outBase64 ? Base64.encodeToString(cipher.doFinal(inBuf), Base64.NO_WRAP) : new String(cipher.doFinal(inBuf), "UTF-8");
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
             return "";
         }
     }
@@ -66,7 +67,7 @@ public class Crypto {
             }
             return outBase64 ? Base64.encodeToString(outBytes, Base64.NO_WRAP) : new String(outBytes, "UTF-8");
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
             return "";
         }
     }

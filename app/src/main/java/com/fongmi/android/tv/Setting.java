@@ -50,7 +50,7 @@ public class Setting {
     }
 
     public static int getWall() {
-        return Prefers.getInt("wall", 4);
+        return Prefers.getInt("wall", 6);
     }
 
     public static void putWall(int wall) {
@@ -71,6 +71,14 @@ public class Setting {
 
     public static void putDecode(int decode) {
         Prefers.put("decode", decode);
+    }
+
+    public static int getPlayerEngine() {
+        return Prefers.getInt("player_engine", Players.AUTO);
+    }
+
+    public static void putPlayerEngine(int engine) {
+        Prefers.put("player_engine", engine);
     }
 
     public static int getRender() {
@@ -257,6 +265,14 @@ public class Setting {
         Prefers.put("danmaku_load", danmakuLoad);
     }
 
+    public static float getDanmakuSize() {
+        return Prefers.getFloat("danmaku_size", 1.0f);
+    }
+
+    public static void putDanmakuSize(float size) {
+        Prefers.put("danmaku_size", size);
+    }
+
     public static boolean isDanmakuShow() {
         return Prefers.getBoolean("danmaku_show");
     }
@@ -366,5 +382,79 @@ public class Setting {
 
     public static void putHistoryVisible(boolean visible) {
         Prefers.put("history_visible", visible);
+    }
+
+    // AI广告拦截功能
+    public static boolean isAIAdBlockEnabled() {
+        return Prefers.getBoolean("ai_ad_block", true); // 默认开启
+    }
+
+    public static void putAIAdBlockEnabled(boolean enabled) {
+        Prefers.put("ai_ad_block", enabled);
+    }
+
+    // WebDAV同步配置
+    public static String getWebDAVUrl() {
+        return Prefers.getString("webdav_url", "");
+    }
+
+    public static void putWebDAVUrl(String url) {
+        Prefers.put("webdav_url", url);
+    }
+
+    public static String getWebDAVUsername() {
+        return Prefers.getString("webdav_username", "");
+    }
+
+    public static void putWebDAVUsername(String username) {
+        Prefers.put("webdav_username", username);
+    }
+
+    public static String getWebDAVPassword() {
+        return Prefers.getString("webdav_password", "");
+    }
+
+    public static void putWebDAVPassword(String password) {
+        Prefers.put("webdav_password", password);
+    }
+
+    public static String getWebDAVSyncMode() {
+        return Prefers.getString("webdav_sync_mode", "ACCOUNT"); // 默认账号模式
+    }
+
+    public static void putWebDAVSyncMode(String mode) {
+        Prefers.put("webdav_sync_mode", mode);
+    }
+
+    public static String getWebDAVSyncCode() {
+        return Prefers.getString("webdav_sync_code", "");
+    }
+
+    public static void putWebDAVSyncCode(String code) {
+        Prefers.put("webdav_sync_code", code);
+    }
+
+    public static String getWebDAVPublicUrl() {
+        return Prefers.getString("webdav_public_url", "");
+    }
+
+    public static void putWebDAVPublicUrl(String url) {
+        Prefers.put("webdav_public_url", url);
+    }
+
+    public static boolean isWebDAVAutoSync() {
+        return Prefers.getBoolean("webdav_auto_sync", false);
+    }
+
+    public static void putWebDAVAutoSync(boolean autoSync) {
+        Prefers.put("webdav_auto_sync", autoSync);
+    }
+
+    public static int getWebDAVSyncInterval() {
+        return Prefers.getInt("webdav_sync_interval", 60); // 默认60分钟
+    }
+
+    public static void putWebDAVSyncInterval(int minutes) {
+        Prefers.put("webdav_sync_interval", minutes);
     }
 }

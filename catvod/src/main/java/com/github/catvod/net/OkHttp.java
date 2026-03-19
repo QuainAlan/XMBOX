@@ -9,6 +9,7 @@ import com.github.catvod.bean.Doh;
 import com.github.catvod.net.interceptor.AuthInterceptor;
 import com.github.catvod.net.interceptor.RequestInterceptor;
 import com.github.catvod.net.interceptor.ResponseInterceptor;
+import com.github.catvod.utils.Logger;
 
 import java.net.ProxySelector;
 import java.security.SecureRandom;
@@ -126,7 +127,7 @@ public class OkHttp {
         try (Response res = newCall(url).execute()) {
             return res.body().string();
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
             return "";
         }
     }
@@ -136,7 +137,7 @@ public class OkHttp {
         try (Response res = newCall(url, Headers.of(headers)).execute()) {
             return res.body().string();
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
             return "";
         }
     }
@@ -146,7 +147,7 @@ public class OkHttp {
         try (Response res = newCall(url).execute()) {
             return res.body().bytes();
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
             return new byte[0];
         }
     }

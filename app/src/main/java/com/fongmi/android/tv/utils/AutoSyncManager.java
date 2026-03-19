@@ -1,4 +1,5 @@
 package com.fongmi.android.tv.utils;
+import com.github.catvod.utils.Logger;
 
 import androidx.annotation.NonNull;
 
@@ -11,7 +12,7 @@ import com.fongmi.android.tv.bean.Device;
 import com.fongmi.android.tv.bean.History;
 import com.fongmi.android.tv.impl.Callback;
 import com.github.catvod.net.OkHttp;
-import com.orhanobut.logger.Logger;
+
 
 import org.greenrobot.eventbus.EventBus;
 

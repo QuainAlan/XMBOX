@@ -11,6 +11,7 @@ import com.fongmi.quickjs.utils.JSUtil;
 import com.fongmi.quickjs.utils.Module;
 import com.github.catvod.utils.Asset;
 import com.github.catvod.utils.Json;
+import com.github.catvod.utils.Logger;
 import com.github.catvod.utils.UriUtil;
 import com.github.catvod.utils.Util;
 import com.whl.quickjs.wrapper.JSArray;
@@ -136,7 +137,7 @@ public class Spider extends com.github.catvod.crawler.Spider {
         try {
             call("destroy");
         } catch (Throwable e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
         }
         submit(() -> {
             executor.shutdownNow();
@@ -178,7 +179,7 @@ public class Spider extends com.github.catvod.crawler.Spider {
             Class<?> clz = dex.loadClass("com.github.catvod.js.Function");
             clz.getDeclaredConstructor(QuickJSContext.class).newInstance(ctx);
         } catch (Throwable e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
         }
     }
 

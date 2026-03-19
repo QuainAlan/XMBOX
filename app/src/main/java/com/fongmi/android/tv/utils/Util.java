@@ -1,4 +1,5 @@
 package com.fongmi.android.tv.utils;
+import com.github.catvod.utils.Logger;
 
 import android.app.Activity;
 import android.content.ClipData;
@@ -85,7 +86,7 @@ public class Util {
             manager.setPrimaryClip(ClipData.newPlainText("", text));
             Notify.show(R.string.copied);
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
         }
     }
 

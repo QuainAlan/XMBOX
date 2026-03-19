@@ -76,6 +76,33 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/playerEngine"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/shape_item"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:text="播放器引擎"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/playerEngineText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    tools:text="ExoPlayer (自动)" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/scale"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

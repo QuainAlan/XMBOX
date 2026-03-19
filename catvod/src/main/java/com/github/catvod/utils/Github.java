@@ -1,4 +1,5 @@
 package com.github.catvod.utils;
+import com.github.catvod.utils.Logger;
 
 import android.os.SystemClock;
 

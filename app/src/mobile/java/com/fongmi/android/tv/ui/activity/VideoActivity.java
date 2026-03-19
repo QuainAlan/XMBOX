@@ -1,5 +1,7 @@
 package com.fongmi.android.tv.ui.activity;
 
+import com.github.catvod.utils.Logger;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -173,6 +175,7 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
     private int mBatteryLevel = -1;
     private boolean mIsCharging = false;
     private boolean mPausedByScreen = false;
+    private float mOriginalBrightness = -1f; // 保存原始亮度
     private AudioManager mAudioManager;
 
     public static void push(FragmentActivity activity, String text) {
@@ -630,6 +633,7 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         mFlagAdapter.addAll(item.getVodFlags());
         setOther(mBinding.other, item);
         setArtwork(item.getVodPic());
+        setPoster(item.getVodPic(getPic()));  // 加载详情页海报
         App.removeCallbacks(mR4);
         checkHistory(item);
         checkFlag(item);
@@ -794,7 +798,7 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
             mPlayers.start(result, isUseParse(), getSite().isChangeable() ? getSite().getTimeout() : -1);
         } catch (Exception e) {
             ErrorEvent.extract(tag, e.getMessage());
-            e.printStackTrace();
+            Logger.e("Error", e);
         }
     }
 
@@ -852,7 +856,11 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
     }
 
     private void onMore() {
-        EpisodeGridDialog.create().reverse(mHistory.isRevSort()).episodes(mEpisodeAdapter.getItems()).show(this);
+        Episode episode = getEpisode();
+        EpisodeGridDialog dialog = EpisodeGridDialog.create()
+                .reverse(mHistory.isRevSort())
+                .episodes(mEpisodeAdapter.getItems());
+        dialog.show(this);
     }
 
     private void onContent() {
@@ -1217,6 +1225,24 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         });
     }
 
+    private void setPoster(String url) {
+        ImgUtil.load(url, R.drawable.radio, new CustomTarget<>(100 * 3, 140 * 3) {
+            @Override
+            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                mBinding.poster.setImageDrawable(resource);
+            }
+
+            @Override
+            public void onLoadFailed(@Nullable Drawable error) {
+                mBinding.poster.setImageResource(R.drawable.radio);
+            }
+
+            @Override
+            public void onLoadCleared(@Nullable Drawable placeholder) {
+            }
+        });
+    }
+
     private void checkFlag(Vod item) {
         boolean empty = item.getVodFlags().isEmpty();
         mBinding.flag.setVisibility(empty ? View.GONE : View.VISIBLE);
@@ -1534,6 +1560,10 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mPlayers.pause();
         checkPlayImg();
+        // 暂停时显示黑色遮罩降低画面亮度，但不影响控制按钮
+        if (mBinding.dim != null) {
+            mBinding.dim.setVisibility(View.VISIBLE);
+        }
     }
 
     private void onPlay() {
@@ -1542,6 +1572,10 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
         if (!mPlayers.isEmpty() && mPlayers.isIdle()) mPlayers.prepare();
         mPlayers.play();
         checkPlayImg();
+        // 播放时隐藏遮罩
+        if (mBinding.dim != null) {
+            mBinding.dim.setVisibility(View.GONE);
+        }
     }
 
     private boolean isFullscreen() {
@@ -1787,8 +1821,17 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
 
     @Override
     public void onSingleTap() {
-        if (isVisible(mBinding.control.getRoot())) hideControl();
-        else showControl();
+        if (isVisible(mBinding.control.getRoot())) {
+            // 控制栏显示时，单击切换播放/暂停
+            if (mPlayers.isPlaying()) {
+                onPaused();
+            } else {
+                onPlay();
+            }
+        } else {
+            // 控制栏隐藏时，显示控制栏
+            showControl();
+        }
     }
 
     @Override

@@ -1,4 +1,5 @@
 package com.fongmi.android.tv.player.extractor;
+import com.github.catvod.utils.Logger;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -55,7 +56,7 @@ public class Force implements Source.Extractor, ServiceConnection {
         try {
             if (!set.isEmpty()) App.get().unbindService(this);
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
         } finally {
             set.clear();
         }

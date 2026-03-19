@@ -1,6 +1,7 @@
 package com.fongmi.android.tv;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
@@ -8,7 +9,6 @@ import android.view.View;
 
 import androidx.appcompat.app.AlertDialog;
 
-import com.fongmi.android.tv.App;
 import com.fongmi.android.tv.databinding.DialogUpdateBinding;
 import com.fongmi.android.tv.utils.Download;
 import com.fongmi.android.tv.utils.FileUtil;
@@ -133,27 +133,44 @@ public class Updater implements Download.Callback {
             
             // 检查是否有GitHub Token
             String githubToken = BuildConfig.GITHUB_TOKEN;
-            String response;
-            if (githubToken != null && !githubToken.isEmpty()) {
-                // 使用token进行认证请求（5000次/小时）
-                java.util.Map<String, String> headers = new java.util.HashMap<>();
-                headers.put("Authorization", "Bearer " + githubToken);
-                headers.put("Accept", "application/vnd.github.v3+json");
-                Logger.d("Updater: Using GitHub Token for authenticated request");
-                response = OkHttp.string(releasesUrl, headers);
-            } else {
-                // 使用未认证请求（60次/小时）
-                Logger.d("Updater: Using unauthenticated request (60 requests/hour limit)");
-                response = OkHttp.string(releasesUrl);
+            String response = null;
+            int retryCount = 0;
+            int maxRetries = 2; // 最多重试2次
+            
+            while (response == null && retryCount <= maxRetries) {
+                try {
+                    if (githubToken != null && !githubToken.isEmpty()) {
+                        // 使用token进行认证请求（5000次/小时）
+                        java.util.Map<String, String> headers = new java.util.HashMap<>();
+                        headers.put("Authorization", "Bearer " + githubToken);
+                        headers.put("Accept", "application/vnd.github.v3+json");
+                        headers.put("User-Agent", "XMBOX-Android");
+                        Logger.d("Updater: Using GitHub Token for authenticated request (attempt " + (retryCount + 1) + ")");
+                        response = OkHttp.string(releasesUrl, headers);
+                    } else {
+                        // 使用未认证请求（60次/小时）
+                        Logger.d("Updater: Using unauthenticated request (attempt " + (retryCount + 1) + ")");
+                        java.util.Map<String, String> headers = new java.util.HashMap<>();
+                        headers.put("User-Agent", "XMBOX-Android");
+                        response = OkHttp.string(releasesUrl, headers);
+                    }
+                } catch (Exception e) {
+                    Logger.e("Updater: Request failed (attempt " + (retryCount + 1) + "): " + e.getMessage());
+                    retryCount++;
+                    if (retryCount <= maxRetries) {
+                        // 等待一段时间后重试
+                        Thread.sleep(1000 * retryCount); // 递增等待时间
+                    }
+                }
             }
             
             // 检查响应是否为空（可能是网络错误、VPN问题等）
             if (response == null || response.isEmpty()) {
-                Logger.e("Updater: 网络请求失败，响应为空。可能是网络连接问题或VPN配置问题");
+                Logger.e("Updater: 网络请求失败，响应为空。可能是网络连接问题或GitHub访问受限");
                 if (forceCheck) {
                     // 手动检查时，显示错误提示
                     App.post(() -> {
-                        Notify.show("检查更新失败：网络连接异常，请检查网络设置或VPN配置");
+                        Notify.show("检查更新失败：无法连接到GitHub，请检查网络或稍后重试");
                         showVersionInfo(activity, BuildConfig.VERSION_NAME, "");
                     });
                 } else {
@@ -162,20 +179,26 @@ public class Updater implements Download.Callback {
                 return;
             }
             
+            // 检查API限流
             if (response.contains("rate limit exceeded") || response.contains("API rate limit exceeded")) {
-                Logger.e("Updater: Rate limit exceeded");
+                Logger.e("Updater: GitHub API rate limit exceeded");
                 if (forceCheck) {
-                    // 手动检查时，显示版本信息弹窗（不显示错误提示）
-                    App.post(() -> showVersionInfo(activity, BuildConfig.VERSION_NAME, ""));
+                    App.post(() -> {
+                        Notify.show("检查更新失败：GitHub API请求次数已达上限，请稍后重试");
+                        showVersionInfo(activity, BuildConfig.VERSION_NAME, "");
+                    });
                 }
                 return;
             }
             
+            // 检查404错误
             if (response.contains("Not Found") || response.contains("404")) {
-                Logger.e("Updater: Release not found");
+                Logger.e("Updater: Release not found (404)");
                 if (forceCheck) {
-                    // 手动检查时，显示版本信息弹窗（不显示错误提示）
-                    App.post(() -> showVersionInfo(activity, BuildConfig.VERSION_NAME, ""));
+                    App.post(() -> {
+                        Notify.show("检查更新失败：未找到发布版本");
+                        showVersionInfo(activity, BuildConfig.VERSION_NAME, "");
+                    });
                 }
                 return;
             }
@@ -195,10 +218,10 @@ public class Updater implements Download.Callback {
                 
                 // 尝试多种文件名格式
                 String[] possibleNames = {
-                    mode + "-" + abi + "-v" + version + ".apk",  // leanback-arm64_v8a-v3.1.0.apk
-                    mode + "-" + abi + "-release.apk",           // leanback-arm64_v8a-release.apk
-                    mode + "-" + abi + ".apk",                   // leanback-arm64_v8a.apk
-                    mode + "-" + abi + "-" + version + ".apk"    // leanback-arm64_v8a-3.1.0.apk
+                    mode + "-" + abi + "-v" + version + ".apk",  // mobile-arm64_v8a-v3.1.0.apk
+                    mode + "-" + abi + "-release.apk",           // mobile-arm64_v8a-release.apk
+                    mode + "-" + abi + ".apk",                   // mobile-arm64_v8a.apk
+                    mode + "-" + abi + "-" + version + ".apk"    // mobile-arm64_v8a-3.1.0.apk
                 };
                 
                 boolean found = false;
@@ -211,6 +234,7 @@ public class Updater implements Download.Callback {
                         if (targetName.equals(assetName)) {
                             String githubUrl = asset.optString("browser_download_url");
                             // jsDelivr无法访问GitHub Release文件，直接使用GitHub Release URL
+                            // 如果GitHub访问慢，可以配置代理或使用其他CDN
                             this.releaseApkUrl = githubUrl;
                             this.fallbackApkUrl = githubUrl;
                             Logger.d("Updater: 找到匹配的APK: " + assetName);
@@ -273,19 +297,26 @@ public class Updater implements Download.Callback {
                     Logger.d("Updater: 自动检查完成，当前已是最新版本");
                 }
             }
+        } catch (InterruptedException e) {
+            Logger.e("Updater: Thread interrupted: " + e.getMessage());
+            Thread.currentThread().interrupt();
         } catch (Exception e) {
             Logger.e("Updater: GitHub API check failed: " + e.getMessage());
-            e.printStackTrace();
+            Logger.e("Updater: Exception", e);
             if (forceCheck) {
                 // 手动检查时，显示错误提示
                 String errorMsg = e.getMessage();
-                if (errorMsg != null && (errorMsg.contains("network") || errorMsg.contains("timeout") || errorMsg.contains("connect"))) {
+                if (errorMsg != null && (errorMsg.contains("network") || errorMsg.contains("timeout") || 
+                    errorMsg.contains("connect") || errorMsg.contains("Unable to resolve host"))) {
                     App.post(() -> {
-                        Notify.show("检查更新失败：网络连接异常，请检查网络设置或VPN配置");
+                        Notify.show("检查更新失败：网络连接异常，请检查网络设置");
                         showVersionInfo(activity, BuildConfig.VERSION_NAME, "");
                     });
                 } else {
-                    App.post(() -> showVersionInfo(activity, BuildConfig.VERSION_NAME, ""));
+                    App.post(() -> {
+                        Notify.show("检查更新失败：" + (errorMsg != null ? errorMsg : "未知错误"));
+                        showVersionInfo(activity, BuildConfig.VERSION_NAME, "");
+                    });
                 }
             } else {
                 Logger.w("Updater: 自动检查失败: " + e.getMessage());
@@ -323,10 +354,9 @@ public class Updater implements Download.Callback {
 
     private void show(Activity activity, String version, String desc) {
         binding = DialogUpdateBinding.inflate(LayoutInflater.from(activity));
-        binding.version.setText(ResUtil.getString(R.string.update_version, version));
-        binding.confirm.setOnClickListener(this::confirm);
-        binding.cancel.setOnClickListener(this::cancel);
-        check().create(activity).show();
+        check().create(activity, ResUtil.getString(R.string.update_version, version)).show();
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(this::confirm);
+        dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setOnClickListener(this::cancel);
         binding.desc.setText(desc);
     }
 
@@ -335,23 +365,19 @@ public class Updater implements Download.Callback {
      */
     private void showVersionInfo(Activity activity, String remoteVersion, String desc) {
         binding = DialogUpdateBinding.inflate(LayoutInflater.from(activity));
-        // 先设置所有内容，再显示对话框
-        binding.version.setText("最新版本");
-        binding.desc.setText(BuildConfig.VERSION_NAME); // 只显示当前版本号，不使用远程信息
-        binding.confirm.setVisibility(View.GONE);
-        binding.cancel.setText("确定");
-        binding.cancel.setOnClickListener(v -> {
+        // 先设置内容，只显示当前版本号，不使用远程信息
+        binding.desc.setText(BuildConfig.VERSION_NAME);
+        check().create(activity, "最新版本").show();
+        // 隐藏确认按钮，只显示取消按钮（改为"确定"）
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setVisibility(View.GONE);
+        dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setText("确定");
+        dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setOnClickListener(v -> {
             if (dialog != null) dialog.dismiss();
         });
-        check().create(activity).show();
     }
 
-    private AlertDialog create(Activity activity) {
-        dialog = new MaterialAlertDialogBuilder(activity).setView(binding.getRoot()).setCancelable(false).create();
-        // 设置对话框背景为透明，让布局的深色背景显示
-        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        dialog.getWindow().setDimAmount(0);
-        return dialog;
+    private AlertDialog create(Activity activity, String title) {
+        return dialog = new MaterialAlertDialogBuilder(activity).setTitle(title).setView(binding.getRoot()).setPositiveButton(R.string.update_confirm, null).setNegativeButton(R.string.dialog_negative, null).setCancelable(false).create();
     }
 
     private void cancel(View view) {
@@ -390,7 +416,7 @@ public class Updater implements Download.Callback {
 
     @Override
     public void progress(int progress) {
-        binding.confirm.setText(String.format(Locale.getDefault(), "%1$d%%", progress));
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setText(String.format(Locale.getDefault(), "%1$d%%", progress));
     }
 
     @Override

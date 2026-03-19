@@ -1,4 +1,5 @@
 package com.fongmi.android.tv.player.extractor;
+import com.github.catvod.utils.Logger;
 
 import android.util.Base64;
 
@@ -150,7 +151,7 @@ public class Youtube implements Source.Extractor {
                 try {
                     add(episodes, extractor.getPage(page.getNextPage()));
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Logger.e("Error", e);
                 }
             }
         }

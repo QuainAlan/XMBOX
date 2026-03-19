@@ -1,4 +1,5 @@
 package com.fongmi.android.tv.api.loader;
+import com.github.catvod.utils.Logger;
 
 import com.fongmi.android.tv.App;
 import com.github.catvod.crawler.Spider;
@@ -33,7 +34,7 @@ public class JsLoader {
             spiders.put(key, spider);
             return spider;
         } catch (Throwable e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
             return new SpiderNull();
         }
     }
@@ -43,7 +44,7 @@ public class JsLoader {
             if (!params.containsKey("siteKey")) return spiders.get(recent).proxyLocal(params);
             return BaseLoader.get().getSpider(params).proxyLocal(params);
         } catch (Throwable e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
             return null;
         }
     }

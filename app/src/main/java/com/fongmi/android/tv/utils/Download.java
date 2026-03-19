@@ -296,7 +296,7 @@ public class Download {
             return true;
         } catch (Exception e) {
             Logger.e("File verification failed: " + e.getMessage());
-            e.printStackTrace();
+            Logger.e("Error", e);
             return false;
         }
     }

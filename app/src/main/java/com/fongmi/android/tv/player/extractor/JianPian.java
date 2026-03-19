@@ -1,4 +1,5 @@
 package com.fongmi.android.tv.player.extractor;
+import com.github.catvod.utils.Logger;
 
 import android.net.Uri;
 
@@ -54,7 +55,7 @@ public class JianPian implements Source.Extractor, Clock.Callback {
             clock.setCallback(this);
             clock.stop().start();
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
         }
     }
 
@@ -65,7 +66,7 @@ public class JianPian implements Source.Extractor, Clock.Callback {
             if (p2p == null || path == null) return;
             p2p.P2Pdoxpause(path.getBytes("GBK"));
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
         } finally {
             path = null;
         }

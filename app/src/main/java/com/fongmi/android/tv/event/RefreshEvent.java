@@ -73,6 +73,10 @@ public class RefreshEvent {
     }
 
     public enum Type {
-        CONFIG, IMAGE, VIDEO, HISTORY, KEEP, SIZE, WALL, LIVE, DETAIL, PLAYER, SUBTITLE, DANMAKU
+        CONFIG, IMAGE, VIDEO, HISTORY, KEEP, SIZE, WALL, LIVE, DETAIL, PLAYER, SUBTITLE, DANMAKU, DOWNLOAD
+    }
+
+    public static void download() {
+        EventBus.getDefault().post(new RefreshEvent(Type.DOWNLOAD));
     }
 }

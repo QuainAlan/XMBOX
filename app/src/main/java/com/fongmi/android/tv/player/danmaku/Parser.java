@@ -1,4 +1,5 @@
 package com.fongmi.android.tv.player.danmaku;
+import com.github.catvod.utils.Logger;
 
 import com.fongmi.android.tv.bean.DanmakuData;
 
@@ -36,7 +37,7 @@ public class Parser extends BaseDanmakuParser {
                     try {
                         items.add(new DanmakuData(matcher, mDispDensity));
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        Logger.e("Error", e);
                     }
                 }
             }
@@ -58,7 +59,7 @@ public class Parser extends BaseDanmakuParser {
             }
             return result;
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
             return null;
         }
     }

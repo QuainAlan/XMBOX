@@ -20,6 +20,7 @@ import com.fongmi.android.tv.App;
 import com.fongmi.android.tv.Constant;
 import com.fongmi.android.tv.Setting;
 import com.fongmi.android.tv.api.AdBlocker;
+import com.fongmi.android.tv.api.AIAdDetector;
 import com.fongmi.android.tv.api.config.LiveConfig;
 import com.fongmi.android.tv.api.config.VodConfig;
 import com.fongmi.android.tv.impl.ParseCallback;
@@ -29,7 +30,7 @@ import com.github.catvod.crawler.Spider;
 import com.github.catvod.net.OkCookieJar;
 import com.github.catvod.utils.Util;
 import com.google.common.net.HttpHeaders;
-import com.orhanobut.logger.Logger;
+import com.github.catvod.utils.Logger;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
@@ -185,12 +186,15 @@ public class CustomWebView extends WebView implements DialogInterface.OnDismissL
         for (String ad : VodConfig.get().getAds()) if (Util.containOrMatch(host, ad)) return true;
         for (String ad : LiveConfig.get().getAds()) if (Util.containOrMatch(host, ad)) return true;
         
+        // 3. AI智能广告检测
+        if (AIAdDetector.isEnabled() && AIAdDetector.isAd("https://" + host)) return true;
+        
         return false;
     }
 
     private boolean isVideoFormat(String url) {
         try {
-            Logger.t(TAG).d(url);
+            Logger.d(url);
             if (!detect && url.equals(this.url)) return false;
             Spider spider = VodConfig.get().getSite(key).spider();
             if (spider.manualVideoCheck()) return spider.isVideoFormat(url);

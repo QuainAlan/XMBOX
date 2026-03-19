@@ -1,4 +1,5 @@
 package com.fongmi.android.tv.service;
+import com.github.catvod.utils.Logger;
 
 import android.app.Notification;
 import android.app.Service;
@@ -133,7 +134,7 @@ public class PlaybackService extends Service {
             setLargeIcon(builder, cache.get(getArtUri()));
             Notify.show(builder.build());
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e("Error", e);
         }
     }
 
