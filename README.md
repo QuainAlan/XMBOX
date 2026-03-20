@@ -9,10 +9,40 @@
 
 一个操作方便、界面简洁的Android视频播放器盒子，需自行添源，支持TV和手机双平台。
 
-[下载APK](https://github.com/Tosencen/XMBOX-Release/tree/main/apk/release) • [功能特性](#-功能特性) • [构建指南](#-构建指南) • [API文档](#-api文档)
+[下载APK](#-下载安装) • [功能特性](#-功能特性) • [构建指南](#-构建指南) • [API文档](#-api文档)
 <img width="1920" height="864" alt="Group 15" src="https://github.com/user-attachments/assets/e69741bd-a21d-417e-ad85-e747032f6daf" />
 
 </div>
+
+## 📥 下载安装
+
+### 最新版本: v3.1.5
+
+| 平台 | ARM64-V8A | ARM V7A |
+|------|-----------|---------|
+| **📱 手机版** | [下载](https://github.com/Tosencen/XMBOX/releases/download/v3.1.5/mobile-arm64_v8a.apk) | [下载](https://github.com/Tosencen/XMBOX/releases/download/v3.1.5/mobile-armeabi_v7a.apk) |
+| **📱 平板版** | [下载](https://github.com/Tosencen/XMBOX/releases/download/v3.1.5/tablet-arm64_v8a.apk) | [下载](https://github.com/Tosencen/XMBOX/releases/download/v3.1.5/tablet-armeabi_v7a.apk) |
+| **📺 TV版** | [下载](https://github.com/Tosencen/XMBOX/releases/download/v3.1.5/leanback-arm64_v8a.apk) | [下载](https://github.com/Tosencen/XMBOX/releases/download/v3.1.5/leanback-armeabi_v7a.apk) |
+
+### 📁 版本历史
+- **v3.1.5**: [查看v3.1.5版本](https://github.com/Tosencen/XMBOX/releases/tag/v3.1.5) - 新增壁纸功能、修复搜索功能、新增播放器、视频暂停时屏幕亮度调节、新增播放页面视频封面
+- **v3.1.3**: [查看v3.1.3版本](https://github.com/Tosencen/XMBOX/releases/tag/v3.1.3) - 新增平板版本，优化演员列表和视频封面显示
+- **v3.1.1**: [查看v3.1.1版本](https://github.com/Tosencen/XMBOX/releases/tag/v3.1.1) - 新增WebDAV同步功能和更新安装器
+- **v3.1.0**: [查看v3.1.0版本](https://github.com/Tosencen/XMBOX/releases/tag/v3.1.0) - 定时器优化和画中画修复版本
+- **v3.0.9**: [查看v3.0.9版本](https://github.com/Tosencen/XMBOX/releases/tag/v3.0.9) - 新增直播开关控制和UI交互优化
+- **v3.0.8**: [查看v3.0.8版本](https://github.com/Tosencen/XMBOX/releases/tag/v3.0.8) - UI交互体验全面优化
+
+### 📦 下载说明
+- **最新版本**: 根目录的 `mobile.json` 和 `leanback.json` 包含最新版本信息
+- **历史版本**: 每个版本都有独立的 Release 标签，包含完整的APK文件和版本信息
+- **文件结构**: 按版本号组织，便于管理和下载
+- **签名保护**: 所有APK均使用v1/v2/v3/v4多重签名保护
+
+TV版基于 [FongMi/TV](https://github.com/FongMi/TV) 原项目就改了些配色，想要嘿稳定的可去原项目体验
+### 📋 系统要求
+- Android 5.0 (API 21) 及以上
+- ARM64-V8A: 推荐新设备使用，性能更优
+- ARM V7A: 兼容老设备，适配性更强
 
 ## 🎯 功能特性
 
@@ -36,36 +66,6 @@
 - 🌐 **网络优化** - 智能代理和DNS解析
 - 📱 **Material Design** - 现代化UI设计
 - ☁️ **WebDAV同步** - 支持观看记录和设置云端同步，支持账号模式和同步码模式
-
-## 📥 下载安装
-
-### 最新版本: v3.1.5
-
-| 平台 | ARM64-V8A | ARM V7A |
-|------|-----------|---------|
-| **📱 手机版** | [下载](https://github.com/Tosencen/XMBOX-Release/raw/main/apk/release/v3.1.5/mobile-arm64_v8a-v3.1.5.apk) | [下载](https://github.com/Tosencen/XMBOX-Release/raw/main/apk/release/v3.1.5/mobile-armeabi_v7a-v3.1.5.apk) |
-| **📱 平板版** | [下载](https://github.com/Tosencen/XMBOX-Release/raw/main/apk/release/v3.1.5/tablet-arm64_v8a-v3.1.5.apk) | [下载](https://github.com/Tosencen/XMBOX-Release/raw/main/apk/release/v3.1.5/tablet-armeabi_v7a-v3.1.5.apk) |
-| **📺 TV版** | [下载](https://github.com/Tosencen/XMBOX-Release/raw/main/apk/release/v3.1.5/leanback-arm64_v8a-v3.1.5.apk) | [下载](https://github.com/Tosencen/XMBOX-Release/raw/main/apk/release/v3.1.5/leanback-armeabi_v7a-v3.1.5.apk) |
-
-### 📁 版本历史
-- **v3.1.5**: [查看v3.1.5版本](https://github.com/Tosencen/XMBOX-Release/tree/main/apk/release/v3.1.5) - 新增壁纸功能、修复搜索功能、新增播放器、视频暂停时屏幕亮度调节、新增播放页面视频封面
-- **v3.1.3**: [查看v3.1.3版本](https://github.com/Tosencen/XMBOX-Release/tree/main/apk/release/v3.1.3) - 新增平板版本，优化演员列表和视频封面显示
-- **v3.1.1**: [查看v3.1.1版本](https://github.com/Tosencen/XMBOX-Release/tree/main/apk/release/v3.1.1) - 新增WebDAV同步功能和更新安装器
-- **v3.1.0**: [查看v3.1.0版本](https://github.com/Tosencen/XMBOX-Release/tree/main/apk/release/v3.1.0) - 定时器优化和画中画修复版本
-- **v3.0.9**: [查看v3.0.9版本](https://github.com/Tosencen/XMBOX-Release/tree/main/apk/release/v3.0.9) - 新增直播开关控制和UI交互优化
-- **v3.0.8**: [查看v3.0.8版本](https://github.com/Tosencen/XMBOX-Release/tree/main/apk/release/v3.0.8) - UI交互体验全面优化
-
-### 📦 下载说明
-- **最新版本**: 根目录的 `mobile.json` 和 `leanback.json` 包含最新版本信息
-- **历史版本**: 每个版本都有独立的文件夹，包含完整的APK文件和版本信息
-- **文件结构**: 按版本号组织，便于管理和下载
-- **签名保护**: 所有APK均使用v1/v2/v3/v4多重签名保护
-
-TV版基于 [FongMi/TV](https://github.com/FongMi/TV) 原项目就改了些配色，想要嘿稳定的可去原项目体验
-### 📋 系统要求
-- Android 5.0 (API 21) 及以上
-- ARM64-V8A: 推荐新设备使用，性能更优
-- ARM V7A: 兼容老设备，适配性更强
 
 ## 🏗️ 构建指南
 

@@ -1821,30 +1821,41 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
 
     @Override
     public void onSingleTap() {
+        // 单击只切换控制栏显示/隐藏，播放暂停只响应中间按钮点击
         if (isVisible(mBinding.control.getRoot())) {
-            // 控制栏显示时，单击切换播放/暂停
-            if (mPlayers.isPlaying()) {
-                onPaused();
-            } else {
-                onPlay();
-            }
+            hideControl();
         } else {
-            // 控制栏隐藏时，显示控制栏
             showControl();
         }
     }
 
     @Override
     public void onDoubleTap() {
+        // 双击中间区域：非全屏时进入全屏
         if (!isFullscreen()) {
             App.post(this::enterFullscreen, 250);
-        } else if (mPlayers.isPlaying()) {
-            showControl();
-            onPaused();
-        } else {
-            hideControl();
-            onPlay();
         }
+    }
+
+    @Override
+    public void onDoubleTapLeft() {
+        // 双击左侧：快退10秒
+        long seekTime = -10000;
+        long newPosition = Math.max(0, mPlayers.getPosition() + seekTime);
+        mPlayers.seekTo(newPosition);
+        onSeek(seekTime);
+        App.post(() -> mBinding.widget.seek.setVisibility(View.GONE), 800);
+    }
+
+    @Override
+    public void onDoubleTapRight() {
+        // 双击右侧：快进10秒
+        long seekTime = 10000;
+        long duration = mPlayers.getDuration();
+        long newPosition = Math.min(duration > 0 ? duration : Long.MAX_VALUE, mPlayers.getPosition() + seekTime);
+        mPlayers.seekTo(newPosition);
+        onSeek(seekTime);
+        App.post(() -> mBinding.widget.seek.setVisibility(View.GONE), 800);
     }
 
     @Override

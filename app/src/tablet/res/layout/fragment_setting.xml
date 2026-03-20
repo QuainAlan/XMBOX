@@ -416,6 +416,41 @@
                         tools:text="Medium" />
 
                 </LinearLayout>
+
+                <!-- 壁纸 -->
+                <LinearLayout
+                    android:id="@+id/wall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="16dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="16dp"
+                        android:src="@drawable/photo_prints_24px"
+                        android:tint="@color/white" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="壁纸"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/wallText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:alpha="0.5"
+                        android:textSize="14sp"
+                        tools:text="内置壁纸 4" />
+
+                </LinearLayout>
             </LinearLayout>
 
             <!-- 网络设置分组 -->

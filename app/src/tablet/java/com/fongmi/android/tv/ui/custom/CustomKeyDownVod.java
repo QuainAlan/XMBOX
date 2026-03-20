@@ -131,7 +131,16 @@ public class CustomKeyDownVod extends GestureDetector.SimpleOnGestureListener im
     @Override
     public boolean onDoubleTap(@NonNull MotionEvent e) {
         if (isEdge(e) || changeScale || e.getPointerCount() > 1) return true;
-        if (!lock) listener.onDoubleTap();
+        if (lock) return true;
+        int screenWidth = ResUtil.getScreenWidth(activity);
+        // 双击左侧1/3区域 → 快退10秒，右侧1/3区域 → 快进10秒，中间 → 非全屏时进入全屏
+        if (e.getX() < screenWidth / 3f) {
+            listener.onDoubleTapLeft();
+        } else if (e.getX() > screenWidth * 2 / 3f) {
+            listener.onDoubleTapRight();
+        } else {
+            listener.onDoubleTap();
+        }
         return true;
     }
 
@@ -270,5 +279,9 @@ public class CustomKeyDownVod extends GestureDetector.SimpleOnGestureListener im
         void onSingleTap();
 
         void onDoubleTap();
+
+        void onDoubleTapLeft();
+
+        void onDoubleTapRight();
     }
 }

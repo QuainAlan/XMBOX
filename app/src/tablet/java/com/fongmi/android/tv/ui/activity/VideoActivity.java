@@ -1830,21 +1830,41 @@ public class VideoActivity extends BaseActivity implements Clock.Callback, Custo
 
     @Override
     public void onSingleTap() {
-        if (isVisible(mBinding.control.getRoot())) hideControl();
-        else showControl();
+        // 单击只切换控制栏显示/隐藏，播放暂停只响应中间按钮点击
+        if (isVisible(mBinding.control.getRoot())) {
+            hideControl();
+        } else {
+            showControl();
+        }
     }
 
     @Override
     public void onDoubleTap() {
+        // 双击中间区域：非全屏时进入全屏
         if (!isFullscreen()) {
             App.post(this::enterFullscreen, 250);
-        } else if (mPlayers.isPlaying()) {
-            showControl();
-            onPaused();
-        } else {
-            hideControl();
-            onPlay();
         }
+    }
+
+    @Override
+    public void onDoubleTapLeft() {
+        // 双击左侧：快退10秒
+        long seekTime = -10000;
+        long newPosition = Math.max(0, mPlayers.getPosition() + seekTime);
+        mPlayers.seekTo(newPosition);
+        onSeek(seekTime);
+        App.post(() -> mBinding.widget.seek.setVisibility(View.GONE), 800);
+    }
+
+    @Override
+    public void onDoubleTapRight() {
+        // 双击右侧：快进10秒
+        long seekTime = 10000;
+        long duration = mPlayers.getDuration();
+        long newPosition = Math.min(duration > 0 ? duration : Long.MAX_VALUE, mPlayers.getPosition() + seekTime);
+        mPlayers.seekTo(newPosition);
+        onSeek(seekTime);
+        App.post(() -> mBinding.widget.seek.setVisibility(View.GONE), 800);
     }
 
     @Override
